@@ -11,16 +11,16 @@ class Command {
 
     /**
      * A hook method called when press enter on command directly.
-     * @param arg
-     * @param callback
+     * @param content
+     * @param disposition
      */
-    onEnter(content: string, callback: any): void {}
+    onEnter(content: string, disposition: chrome.omnibox.OnInputEnteredDisposition): void {}
 
     /**
      * A hook method called when the onExecute()'s result is empty.
      * @param arg
      */
-    onBlankResult(arg: any): string[] {
+    onBlankResult(arg: any): chrome.omnibox.SuggestResult[] {
         return []
     }
 

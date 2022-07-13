@@ -239,7 +239,7 @@ class Omnibox {
      * - newForegroundTab: alt + enter
      * - newBackgroundTab: meta + enter
      */
-    static navigateToUrl(url: string, disposition: string) {
+    static navigateToUrl(url: string, disposition: chrome.omnibox.OnInputEnteredDisposition) {
         url = url.replace(/\?\d+$/ig, "")
         if (disposition === "currentTab") {
             chrome.tabs.query({ active: true }, tab => {
