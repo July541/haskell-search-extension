@@ -1,4 +1,4 @@
 interface CachedQuery {
     queryInput: string
-    queryResult: any
+    queryResult: SearchResult[]
 }

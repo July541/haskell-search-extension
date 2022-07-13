@@ -1,13 +1,13 @@
 type OnSearchType = (searchContent: string) => Promise<SearchResult[]>
 
 class QueryEvent {
-    private param: QueryEventFuncs
+    public param: QueryEventFuncs
     private searchContent: string
-    private defaultSearch: boolean
+    public defaultSearch: boolean
     /**
      * The default search priority. The smaller, the higher.
      */ 
-    private searchPriority: number
+    public searchPriority: number
 
     constructor(param: QueryEventFuncs, defaultSearch: boolean = false, searchPriority: number = 0) {
         this.param = param
@@ -24,10 +24,9 @@ class QueryEvent {
         })
     }
 
-    doFormat(item: SearchResult, index: number): SearchResult {
+    doFormat(content: chrome.omnibox.SuggestResult, index: number): void {
         if (this.param.onFormat) {
-            item = this.param.onFormat(index, item, this.searchContent)
+            this.param.onFormat(index, content, this.searchContent)
         }
-        return item
     }
 }
