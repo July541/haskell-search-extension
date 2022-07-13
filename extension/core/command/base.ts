@@ -7,7 +7,9 @@ class Command {
         this.description = description;
     }
 
-    async onExecute(arg: any): Promise<void> {}
+    async onExecute(arg: any): Promise<OmniboxContent[]> {
+        return []
+    }
 
     /**
      * A hook method called when press enter on command directly.

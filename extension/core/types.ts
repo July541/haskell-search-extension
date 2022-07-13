@@ -3,6 +3,12 @@ interface OmniboxContent {
     description: string
 }
 
+interface OmniboxParam {
+    name: string
+    url: string
+    description?: string
+}
+
 interface QueryWithPage {
     query: string
     page: number
