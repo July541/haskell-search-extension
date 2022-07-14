@@ -1,0 +1,12 @@
+{
+   "browser_action": { },
+   "content_security_policy": "script-src 'self'; object-src 'self';",
+   "description": "no desc",
+   "icons": { },
+   "manifest_version": 2,
+   "name": "Haskell Search Extension",
+   "omnibox": {
+      "keyword": "hs"
+   },
+   "version": "0.0.1"
+}
