@@ -1,5 +1,6 @@
 import Command from "./base"
 import "../compat"
+import { OmniboxParam, OmniboxContent } from "../types"
 
 /**
  * A simple command to quick setup a list item of [name, url, description] data search.

@@ -1,20 +1,23 @@
-interface OmniboxContent {
+import "./cache"
+import "./query-event"
+
+export interface OmniboxContent {
     content: string
     description: string
 }
 
-interface OmniboxParam {
+export interface OmniboxParam {
     name: string
     url: string
     description?: string
 }
 
-interface QueryWithPage {
+export interface QueryWithPage {
     query: string
     page: number
 }
 
-interface OmniboxFunctions {
+export interface OmniboxFunctions {
     onSearch(searchContent: string): Promise<SearchResult[]>
     onAppend(param: string): void
     onEmptyNavigate?: (content: string, disposition: chrome.omnibox.OnInputEnteredDisposition) => Promise<void>
@@ -22,7 +25,7 @@ interface OmniboxFunctions {
     afterNavigate?: (cached?: CachedQuery, searchResult?: SearchResult) => Promise<void>
 }
 
-interface QueryEventFuncs {
+export interface QueryEventFuncs {
     onSearch: (searchContent: string) => Promise<SearchResult[]>
     onFormat?: (index: number, content: chrome.omnibox.SuggestResult, searchContent: string) => void
     onAppend?: (query: string) => SearchResult[]
@@ -34,6 +37,10 @@ interface QueryEventFuncs {
     checkIfIsdefaultSearch?: () => boolean
 }
 
-interface SearchResult extends chrome.omnibox.SuggestResult {
+export interface SearchResult extends chrome.omnibox.SuggestResult {
     event?: QueryEvent
+}
+
+export interface StorageItem extends OmniboxContent {
+    query: string
 }

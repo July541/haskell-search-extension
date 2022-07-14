@@ -1,4 +1,4 @@
-import "../types"
+import { OmniboxContent } from "../types";
 
 export default class Command {
     public name: string

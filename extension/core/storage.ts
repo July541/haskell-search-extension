@@ -1,9 +1,11 @@
+import { StorageItem } from "./types"
+
 /**
  * Mimic localStorage API with chrome.storage.
  * 
  * See also: https://developer.chrome.com/docs/extensions/reference/storage/
  */
-class ExtersionStorage { // TODO: Replace with namespace
+export class ExtersionStorage { // TODO: Replace with namespace
     /**
      * Keep `any` to make compiler happy.
      */
@@ -16,15 +18,15 @@ class ExtersionStorage { // TODO: Replace with namespace
     /**
      * Gets one **or** more items from storage.
      */
-    static getItem<T>(key: string): Promise<T> {
-        return new Promise<T>(resolve => {
-            chrome.storage.local.get(key, (result: {[key:string]: T}) => {
+    static getItem(key: string): Promise<StorageItem[]> {
+        return new Promise<StorageItem[]>(resolve => {
+            chrome.storage.local.get(key, (result: {[key:string]: StorageItem[]}) => {
                 resolve(result[key])
             })
         })
     }
 
-    static setItem<T>(key: string, val: T): Promise<void> {
+    static setItem(key: string, ...val: StorageItem[]): Promise<void> {
         return new Promise<void>(resolve => {
             chrome.storage.local.set({
                 [key]: val
@@ -41,9 +43,9 @@ class ExtersionStorage { // TODO: Replace with namespace
         })
     }
 
-    static async migrateLocalStorage<T>(key: string): Promise<void> {
+    static async migrateLocalStorage(key: string): Promise<void> {
         let val = localStorage.getItem(key)
-        let parsed: T | undefined = undefined
+        let parsed: StorageItem | undefined = undefined
         if (val) {
             try {
                 parsed = JSON.parse(val)
