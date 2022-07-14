@@ -1,10 +1,7 @@
 import "./cache"
 import "./query-event"
 
-export interface OmniboxContent {
-    content: string
-    description: string
-}
+export type OmniboxContent = chrome.omnibox.SuggestResult
 
 export interface OmniboxParam {
     name: string
@@ -43,4 +40,8 @@ export interface SearchResult extends chrome.omnibox.SuggestResult {
 
 export interface StorageItem extends OmniboxContent {
     query: string
+    /**
+     * Record search times
+     */
+    time: number
 }
