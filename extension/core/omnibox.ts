@@ -1,10 +1,14 @@
+import "./types"
+import "./query-event"
+import "./cache"
+
 /**
  * Used to go to the next page with one `PAGE_TURNER`
  */
 const PAGE_TURNER = "-";
 const URL_PROTOCOLS = /^(https?|file|chrome-extension|moz-extension):\/\//i;
 
-class Omnibox {
+export class Omnibox {
     private maxSuggestionSize: number
     private defaultSuggestionDescriptions: string
     private defaultSuggestionContent?: string

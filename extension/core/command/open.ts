@@ -1,3 +1,6 @@
+import Command from "./base"
+import { Omnibox } from "../omnibox"
+
 type Result = chrome.omnibox.SuggestResult
 
 /**

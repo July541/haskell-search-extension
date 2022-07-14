@@ -1,4 +1,6 @@
-class Command {
+import "../types"
+
+export default class Command {
     public name: string
     public description: string
 
