@@ -1,6 +1,6 @@
-class Toast {
+export class Toast {
     private element: HTMLElementTagNameMap[keyof HTMLElementTagNameMap] | null
-    private dismissTimeoutId?: number
+    private dismissTimeoutId?: NodeJS.Timeout
 
     constructor(selector: keyof HTMLElementTagNameMap) {
         this.element = document.querySelector(selector)

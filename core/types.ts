@@ -1,5 +1,5 @@
-import "./cache"
-import "./query-event"
+import { CachedQuery } from "./cache"
+import { QueryEvent } from "./query-event"
 
 export type OmniboxContent = chrome.omnibox.SuggestResult
 

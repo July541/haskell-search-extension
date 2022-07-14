@@ -1,4 +1,4 @@
-class Compat {
+export class Compat {
     public static browserType(): "firefox" | "edge" | "chrome" | "unknown" {
         let userAgent = navigator.userAgent.toLowerCase()
 

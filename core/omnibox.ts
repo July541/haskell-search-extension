@@ -1,4 +1,5 @@
 import { CachedQuery } from "./cache";
+import { QueryEvent } from "./query-event";
 import { QueryWithPage, OmniboxFunctions, SearchResult, QueryEventFuncs } from "./types";
 
 /**

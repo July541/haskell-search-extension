@@ -1,6 +1,8 @@
+import { SearchResult, QueryEventFuncs } from "./types"
+
 type OnSearchType = (searchContent: string) => Promise<SearchResult[]>
 
-class QueryEvent {
+export class QueryEvent {
     public param: QueryEventFuncs
     private searchContent: string
     public defaultSearch: boolean

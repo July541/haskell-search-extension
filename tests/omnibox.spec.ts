@@ -1,4 +1,4 @@
-import { Omnibox } from "../extension/core/omnibox";
+import { Omnibox } from "../core/omnibox";
 
 describe("Omnibox", () => {
     describe(".parse()", () => {
