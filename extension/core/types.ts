@@ -40,8 +40,5 @@ export interface SearchResult extends chrome.omnibox.SuggestResult {
 
 export interface StorageItem extends OmniboxContent {
     query: string
-    /**
-     * Record search times
-     */
     time: number
 }

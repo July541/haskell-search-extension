@@ -9,7 +9,7 @@ export default class Command {
         this.description = description;
     }
 
-    async onExecute(arg: any): Promise<OmniboxContent[]> {
+    async onExecute(arg?: any): Promise<OmniboxContent[]> {
         return []
     }
 

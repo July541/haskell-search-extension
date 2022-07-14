@@ -26,7 +26,7 @@ export class ExtersionStorage { // TODO: Replace with namespace
         })
     }
 
-    static setItem(key: string, ...val: StorageItem[]): Promise<void> {
+    static setItem(key: string, val: StorageItem[]): Promise<void> {
         return new Promise<void>(resolve => {
             chrome.storage.local.set({
                 [key]: val
@@ -45,7 +45,7 @@ export class ExtersionStorage { // TODO: Replace with namespace
 
     static async migrateLocalStorage(key: string): Promise<void> {
         let val = localStorage.getItem(key)
-        let parsed: StorageItem | undefined = undefined
+        let parsed: StorageItem[] | undefined = undefined
         if (val) {
             try {
                 parsed = JSON.parse(val)
