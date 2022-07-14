@@ -5,7 +5,7 @@ import { StorageItem } from "./types"
  * 
  * See also: https://developer.chrome.com/docs/extensions/reference/storage/
  */
-export class ExtersionStorage { // TODO: Replace with namespace
+export class ExtensionStorage { // TODO: Replace with namespace
     /**
      * Keep `any` to make compiler happy.
      */

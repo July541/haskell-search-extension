@@ -1,5 +1,5 @@
 import { Compat } from "../compat"
-import { ExtersionStorage } from "../storage"
+import { ExtensionStorage } from "../storage"
 import { OmniboxContent } from "../types"
 import Command from "./base"
 
@@ -9,7 +9,7 @@ export class HistoryCommand extends Command {
     }
 
     async onExecute(arg?: any): Promise<OmniboxContent[]> {
-        let history = await ExtersionStorage.getItem("history")
+        let history = await ExtensionStorage.getItem("history")
         return history
             .filter(item => !arg || item.query.toLowerCase().indexOf(arg) > -1)
             // Make the high frequency appear in front
@@ -45,7 +45,7 @@ export class HistoryCommand extends Command {
 
         let { content, description } = result
         description = Compat.eliminateTags(description)
-        let history = await ExtersionStorage.getItem("history") || []
+        let history = await ExtensionStorage.getItem("history") || []
         let historyItem = { query, content, description, time: Date.now() }
         history.push(historyItem)
 
@@ -54,7 +54,7 @@ export class HistoryCommand extends Command {
             history.sort((a, b) => b.time - a.time).splice(maxSize)
         }
 
-        await ExtersionStorage.setItem("history", history)
+        await ExtensionStorage.setItem("history", history)
         return historyItem
     }
 }
