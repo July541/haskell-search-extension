@@ -1,3 +1,4 @@
+import { Compat } from "../compat"
 import { ExtersionStorage } from "../storage"
 import { OmniboxContent } from "../types"
 import Command from "./base"
