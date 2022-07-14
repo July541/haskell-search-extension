@@ -1,6 +1,5 @@
-import "./types"
-import "./query-event"
-import "./cache"
+import { CachedQuery } from "./cache";
+import { QueryWithPage, OmniboxFunctions, SearchResult, QueryEventFuncs } from "./types";
 
 /**
  * Used to go to the next page with one `PAGE_TURNER`
@@ -19,7 +18,7 @@ export class Omnibox {
     private cached?: CachedQuery
     private noCacheQueries: Set<string>
 
-    private globalEvent: QueryEvent
+    private globalEvent?: QueryEvent
 
     constructor(defaultSuggestionDesc: string, maxSuggestionSize: number = 8) {
         this.maxSuggestionSize = maxSuggestionSize
@@ -52,7 +51,7 @@ export class Omnibox {
             // {keyword} {page-turner}
             query = [args[0]]
             page = parsePage(args[1])
-        } else if (args.length > 2) {
+        } else if (args.length >= 2) {
             query = [args[0], args[1]]
             if (args[2] && args[2].startsWith(PAGE_TURNER)) {
                 page = parsePage(args[2])
@@ -188,6 +187,9 @@ export class Omnibox {
                 result.push(...matchedEvent.param.onAppend(query))
             }
         } else {
+            if (!this.globalEvent) {
+                return []
+            }
             result = await this.globalEvent.doSearch(query)
             let defaultSearchEvents = this
                 .queryEvents
