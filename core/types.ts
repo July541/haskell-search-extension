@@ -36,6 +36,7 @@ export interface QueryEventFuncs {
 
 export interface SearchResult extends chrome.omnibox.SuggestResult {
     event?: QueryEvent
+    path?: string
 }
 
 export interface StorageItem extends OmniboxContent {

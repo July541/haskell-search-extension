@@ -15,6 +15,7 @@ export class QueryEvent {
         this.param = param
         this.defaultSearch = defaultSearch
         this.searchPriority = searchPriority
+        this.searchContent = ""
     }
 
     async doSearch(input: string) {
