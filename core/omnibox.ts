@@ -143,7 +143,7 @@ export class Omnibox {
                 if (URL_PROTOCOLS.test(content)) {
                     Omnibox.navigateToUrl(content, disposition)
                     navigated = true
-                    
+
                     if (result) {
                         result.content = content
                     }
@@ -163,10 +163,10 @@ export class Omnibox {
     /**
      * Try to search by following a specific query event,
      * and then fallback to default global search if no event matched.
-     * 
+     *
      * While default search is activated, more search work may required.
-     * @param query 
-     * @returns 
+     * @param query
+     * @returns
      */
     async doSearch(query: string): Promise<SearchResult[]> {
         let result: SearchResult[]
@@ -201,7 +201,7 @@ export class Omnibox {
                     return event.defaultSearch
                 })
                 .sort((a, b) => a.searchPriority - b.searchPriority)
-            
+
             let defaultSearchAppendixes: SearchResult[] = []
             defaultSearchEvents.forEach(async event => {
                 result.push(...await event.doSearch(query))
