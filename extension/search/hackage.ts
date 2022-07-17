@@ -16,10 +16,31 @@ export class HackageSearcher {
     }
 
     async search(keyword: string): Promise<SearchResult[]> {
-        return this.indices.map(k => {
+        keyword = keyword.toLowerCase()
+
+        let results: { key: string; matchIndex: number }[] = []
+
+        this.indices.forEach((key, _) => {
+            if (keyword.length <= key.length) {
+                let matchIndex = key.toLowerCase().indexOf(keyword)
+                if (matchIndex !== -1) {
+                    results.push({
+                        key,
+                        matchIndex
+                    })
+                }
+            }
+        })
+
+        return results.sort((a, b) => {
+            if (a.matchIndex === b.matchIndex) {
+                return a.key.length - b.key.length
+            }
+            return a.matchIndex - b.matchIndex
+        }).map(item => {
             return {
-                content: k,
-                description: this.rawData[k]
+                content: item.key,
+                description: this.rawData[item.key]
             }
         })
     }
