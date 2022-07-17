@@ -19,7 +19,7 @@ export class Compat {
                  "unknown": 6
                } [this.browserType()]
     }
-    
+
     /**
      * Escape the five predefined entities to display them as text.
      * @param str
@@ -68,6 +68,6 @@ export class Compat {
     }
 
     public static taggedDim(s: string): string {
-        return this.tagged("match", s)
+        return this.tagged("dim", s)
     }
 }
