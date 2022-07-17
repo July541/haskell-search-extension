@@ -57,7 +57,7 @@ export class Compat {
     }
 
     public static tagged(tag: string, s: string): string {
-        if (this.browserType() === "firefox") {
+        if (this.browserType() !== "firefox") {
             return `<${tag}>${s}</${tag}>`
         }
         return s

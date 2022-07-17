@@ -14,8 +14,15 @@ import { data } from "./data/hackage"
         onSearch: (query) => {
             return hackageSearcher.search(query)
         },
+        onFormat: (_, result) => {
+            console.log("format", result)
+            let { ...ret } = result
+            ret.path = `https://hackage.haskell.org/package/${result.content}`
+            ret.description = `[package] ${Compat.taggedMatch(Compat.escape(result.content))} - ${Compat.taggedDim(Compat.escape(result.description))}`
+            return ret
+        },
         onAppend: function (param: string): void {
-            
+
         }
     }
     omnibox.bootstrap(omniboxFuncs)

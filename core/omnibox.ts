@@ -65,7 +65,7 @@ export class Omnibox {
     }
 
     bootstrap(funcs: OmniboxFunctions): void {
-        this.globalEvent = new QueryEvent({ onSearch: funcs.onSearch })
+        this.globalEvent = new QueryEvent({ onSearch: funcs.onSearch, onFormat: funcs.onFormat })
         this.setDefaultSuggestion(this.defaultSuggestionDescriptions)
 
         let results: SearchResult[]
@@ -98,7 +98,7 @@ export class Omnibox {
                 .slice(this.maxSuggestionSize * (page - 1), this.maxSuggestionSize * page)
                 .map(({ event, ...item} , index) => {
                     if (event) {
-                        event.doFormat(item, index)
+                        item = event.doFormat(item, index)
                     }
                     if (uniqueUrls.has(item.content)) {
                         item.content += `?${uniqueUrls.size + 1}`

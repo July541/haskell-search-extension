@@ -14,17 +14,19 @@ export interface QueryWithPage {
     page: number
 }
 
-export interface OmniboxFunctions {
+interface BaseFunctions {
     onSearch(searchContent: string): Promise<SearchResult[]>
+    onFormat: (index: number, content: SearchResult) => SearchResult
+}
+
+export interface OmniboxFunctions extends BaseFunctions {
     onAppend(param: string): void
     onEmptyNavigate?: (content: string, disposition: chrome.omnibox.OnInputEnteredDisposition) => Promise<void>
     beforeNavigate?: (cached?: CachedQuery, content?: string) => Promise<string>
     afterNavigate?: (cached?: CachedQuery, searchResult?: SearchResult) => Promise<void>
 }
 
-export interface QueryEventFuncs {
-    onSearch: (searchContent: string) => Promise<SearchResult[]>
-    onFormat?: (index: number, content: chrome.omnibox.SuggestResult, searchContent: string) => void
+export interface QueryEventFuncs extends BaseFunctions {
     onAppend?: (query: string) => SearchResult[]
     prefix?: string
     regex?: RegExp
