@@ -3,7 +3,7 @@
     "test": "jest",
     "build": "npx ts-node -T build.ts --firefox",
     "build/dev": "npx ts-node -T build.ts --firefox --watch --dev",
-    "run": "npx web-ext run -s dist-firefox"
+    "run": "npx web-ext run -s dist-firefox -t chromium"
   },
   "devDependencies": {
     "@hanazuki/node-jsonnet": "^1.0.0",
