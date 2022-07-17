@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Download where
 
 import qualified Network.HTTP.Conduit as C
@@ -6,23 +7,45 @@ import Network.Connection
 import Data.Conduit.Binary (sinkFile)
 import Control.Monad.Trans.Resource
 import Control.Monad.IO.Class (MonadIO)
-import System.IO.Extra (withTempDir)
+import System.IO.Extra (withTempDir, writeFileUTF8)
 import System.FilePath ((</>))
 import System.Time.Extra (duration, showDuration)
+import Crypto.Hash.Conduit (hashFile)
+import Crypto.Hash.Algorithms (SHA256)
+import Crypto.Hash (Digest)
+import System.Directory.Extra (getCurrentDirectory)
+
+type URL = String
+
+-- | Download from a specific url to a target file path,
+-- and return its sha256.
+downloadFileWithSHA256 :: FilePath -> URL -> IO (Digest SHA256)
+downloadFileWithSHA256 file url = do
+  downloadFile file url
+  hashFile file
 
 processHackage :: IO ()
 processHackage = withTempDir $ \dir -> do
   let cabals = dir </> "haskell-cabal.tar.gz"
   timing cabals "https://hackage.haskell.org/packages/index.tar.gz"
+  (res :: Digest SHA256) <- hashFile cabals
+  persistSHA256 res
   return ()
   where
+    timing :: FilePath -> URL -> IO ()
     timing file url = do
       putStrLn $ "Start downloading from " <> url <> "..."
       (sec, _) <- duration (downloadFile file url)
       putStrLn $ "Done. Saved to: " <> file <> ", time usage: " <> showDuration sec
 
+    persistSHA256 :: Digest SHA256 -> IO ()
+    persistSHA256 sha256 = do
+      dir <- getCurrentDirectory
+      let path = dir </> "sha256"
+      writeFileUTF8 path (show sha256)
+
 -- From hoogle
-downloadFile :: FilePath -> String -> IO ()
+downloadFile :: FilePath -> URL -> IO ()
 downloadFile file url = do
     let request = C.parseRequest_ url
     manager <- C.newManager $ C.mkManagerSettings (TLSSettingsSimple True False False) Nothing
