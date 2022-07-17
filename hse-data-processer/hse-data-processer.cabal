@@ -1,0 +1,39 @@
+cabal-version:      3.0
+name:               hse-data-processer
+version:            0.1.0.0
+synopsis:           Haskell Search Extansion Data Processer
+
+-- A longer description of the package.
+-- description:
+homepage:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+license:            MIT
+license-file:       LICENSE
+author:             Lei Zhu
+maintainer:         julytreee@gmail.com
+
+-- A copyright notice.
+-- copyright:
+-- category:
+extra-source-files: CHANGELOG.md
+
+executable hse-data-processer
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    other-modules:    Download
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:    base ^>=4.15.1.0
+                    , conduit
+                    , conduit-extra
+                    , http-conduit
+                    , connection
+                    , resourcet
+                    , extra
+                    , filepath
+    hs-source-dirs:   exe
+    default-language: Haskell2010
