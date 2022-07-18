@@ -40,5 +40,10 @@ executable hse-data-processer
                     , cryptonite
                     , cryptonite-conduit
                     , text
+                    , containers
+                    , tar
+                    , zlib
+                    , bytestring
+                    , deepseq
     hs-source-dirs:   exe
     default-language: Haskell2010

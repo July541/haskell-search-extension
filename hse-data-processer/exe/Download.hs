@@ -14,6 +14,9 @@ import Crypto.Hash.Conduit (hashFile)
 import Crypto.Hash.Algorithms (SHA256)
 import Crypto.Hash (Digest)
 import System.Directory.Extra (getCurrentDirectory)
+import Processer
+import qualified Data.Map as Map
+import qualified Data.Text as T
 
 type URL = String
 
@@ -27,9 +30,13 @@ downloadFileWithSHA256 file url = do
 processHackage :: IO ()
 processHackage = withTempDir $ \dir -> do
   let cabals = dir </> "haskell-cabal.tar.gz"
-  timing cabals "https://hackage.haskell.org/packages/index.tar.gz"
+  -- timing cabals "https://hackage.haskell.org/01-index.tar.gz"
+  timing cabals "http://localhost:8000/01-index.tar.gz"
   (res :: Digest SHA256) <- hashFile cabals
   persistSHA256 res
+  r <- parseCabalTarball cabals
+  print $ Map.lookup (T.pack "haskell-language-server") r
+  print $ length $ Map.keys r
   return ()
   where
     timing :: FilePath -> URL -> IO ()
