@@ -114,4 +114,16 @@ lexCabal = f . T.lines
 trimText :: T.Text -> T.Text
 trimText t = T.dropWhileEnd isSpace $ T.dropWhile isSpace t
 
--- processSearchData :: Map.Map PackageName CabalPackage -> (PackageName -> CabalPackage -> SearchData)
+processSearchData
+  :: (PackageName -> CabalPackage -> SearchData)
+  -> (SearchData -> T.Text)
+  -> Map.Map PackageName CabalPackage
+  -> [T.Text]
+processSearchData convert format = map (format . uncurry convert) . Map.toAscList
+
+saveSearchData
+  :: ([T.Text] -> T.Text)
+  -> FilePath
+  -> [T.Text]
+  -> IO ()
+saveSearchData wrap path =  writeFile path . T.unpack . wrap
