@@ -113,7 +113,13 @@ export class Omnibox {
                 description += ` | Page [${page}/${totalPage}], append '${PAGE_TURNER}' to page down`
                 this.setDefaultSuggestion(description, content)
             }
-            suggestFn(results)
+
+            const wrap = (r: SearchResult[]) =>
+                r.map(item => {
+                    return { content: item.content, description: item.description }
+                })
+
+            suggestFn(wrap(results))
         })
 
         chrome.omnibox.onInputEntered.addListener(async (content: string, disposition) => {
