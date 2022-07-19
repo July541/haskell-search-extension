@@ -9,7 +9,6 @@ import System.FilePath
 import qualified Data.Map as Map
 import Types
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as LT
 import Text.Show.Unicode
 
 defaultOutPath = do
@@ -23,9 +22,7 @@ defaultProcess = processSearchData convert format
     convert name package = SearchData name (packageSynopsis package)
 
     format :: SearchData -> T.Text
-    format SearchData{..} = T.pack $ wrap (ushow (T.unpack content)) <> ":" <> ushow (urecover (T.unpack description))
-
-    wrap s = s -- "\"" ++ s ++ "\""
+    format SearchData{..} = T.pack $ ushow (T.unpack content) <> ":" <> ushow (T.unpack description)
 
 defaultSave :: [T.Text] -> IO ()
 defaultSave datum = do
