@@ -40,6 +40,7 @@ export class HackageSearcher {
         }).map(item => {
             return {
                 content: item.key,
+                path: item.key,
                 description: this.rawData[item.key]
             }
         })

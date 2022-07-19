@@ -1,6 +1,6 @@
 import { Compat } from "../core/compat"
 import { Omnibox } from "../core/omnibox"
-import { OmniboxFunctions } from "../core/types"
+import { OmniboxFunctions, SearchResult } from "../core/types"
 import { HackageSearcher } from "./search/hackage"
 import { data } from "./data/hackage"
 
@@ -14,11 +14,11 @@ import { data } from "./data/hackage"
         onSearch: (query) => {
             return hackageSearcher.search(query)
         },
-        onFormat: (_, result) => {
-            let { ...ret } = result
-            ret.path = `https://hackage.haskell.org/package/${result.content}`
-            ret.description = `[package] ${Compat.taggedMatch(Compat.escape(result.content))} - ${Compat.taggedDim(Compat.escape(result.description))}`
-            return ret
+        onFormat: (_, result): SearchResult => {
+            return {
+                content: `https://hackage.haskell.org/package/${result.path}`,
+                description: `[package] ${Compat.taggedMatch(Compat.escape(result.path))} - ${Compat.taggedDim(Compat.escape(result.description))}`
+            }
         },
         onAppend: function (param: string): void {
 
