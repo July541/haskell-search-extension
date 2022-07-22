@@ -37,21 +37,21 @@ processHackage process save = withTempDir $ \dir -> do
   -- timing cabals "https://hackage.haskell.org/01-index.tar.gz"
   timing cabals "http://localhost:8000/01-index.tar.gz"
   (res :: Digest SHA256) <- hashFile cabals
-  persistSHA256 res
+  persistSHA256 res "cabal-sha256"
   datum <- process <$> parseCabalTarball cabals
   save datum
-  where
-    timing :: FilePath -> URL -> IO ()
-    timing file url = do
-      putStrLn $ "Start downloading from " <> url <> "..."
-      (sec, _) <- duration (downloadFile file url)
-      putStrLn $ "Done. Saved to: " <> file <> ", time usage: " <> showDuration sec
 
-    persistSHA256 :: Digest SHA256 -> IO ()
-    persistSHA256 sha256 = do
-      dir <- getCurrentDirectory
-      let path = dir </> "sha256"
-      writeFileUTF8 path (show sha256)
+timing :: FilePath -> URL -> IO ()
+timing file url = do
+  putStrLn $ "Start downloading from " <> url <> "..."
+  (sec, _) <- duration (downloadFile file url)
+  putStrLn $ "Done. Saved to: " <> file <> ", time usage: " <> showDuration sec
+
+persistSHA256 :: Digest SHA256 -> String -> IO ()
+persistSHA256 sha256 filename = do
+  dir <- getCurrentDirectory
+  let path = dir </> filename
+  writeFileUTF8 path (show sha256)
 
 -- From hoogle
 downloadFile :: FilePath -> URL -> IO ()
