@@ -10,7 +10,7 @@
 module Processer where
 
 import qualified Data.Map as Map
-import Types (PackageName, CabalPackage (..), SearchData)
+import Types (PackageName, CabalPackage (..), SearchData, PackageURL)
 import Data.Conduit.List (sourceList, consume)
 import qualified Data.ByteString.Lazy as LBS
 import qualified Codec.Compression.GZip as GZip
@@ -127,3 +127,6 @@ saveSearchData
   -> [T.Text]
   -> IO ()
 saveSearchData wrap path =  writeFile path . T.unpack . wrap
+
+wrapHackageURL :: PackageName -> PackageURL
+wrapHackageURL = ("https://hackage.haskell.org/package/" <>)

@@ -19,8 +19,6 @@ import qualified Data.Map as Map
 import qualified Data.Text as T
 import Types
 
-type URL = String
-
 -- | Download from a specific url to a target file path,
 -- and return its sha256.
 downloadFileWithSHA256 :: FilePath -> URL -> IO (Digest SHA256)

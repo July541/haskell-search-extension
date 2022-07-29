@@ -26,6 +26,7 @@ executable hse-data-processer
     other-modules:    Download
                     , Processer
                     , Types
+                    , Hoogle
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -46,5 +47,8 @@ executable hse-data-processer
                     , bytestring
                     , deepseq
                     , unicode-show
+                    , haskell-src-exts >= 1.22
+                    , uniplate ^>= 1.6
+                    , utf8-string
     hs-source-dirs:   exe
     default-language: Haskell2010

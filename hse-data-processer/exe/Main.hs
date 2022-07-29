@@ -10,10 +10,15 @@ import qualified Data.Map as Map
 import Types
 import qualified Data.Text as T
 import Text.Show.Unicode
+import Hoogle (processHoogle)
 
-defaultOutPath = do
+defaultHackageOutPath = do
   path <- getCurrentDirectory
   pure $ path </> ".." </> "extension" </> "data" </> "hackage.ts"
+
+defaultHoogleOutPat = do
+  path <- getCurrentDirectory
+  pure $ path </> ".." </> "extension" </> "data" </> "hoogle.ts"
 
 defaultProcess :: Map.Map PackageName CabalPackage -> [T.Text]
 defaultProcess = processSearchData convert format
@@ -24,13 +29,15 @@ defaultProcess = processSearchData convert format
     format :: SearchData -> T.Text
     format SearchData{..} = T.pack $ ushow (T.unpack content) <> ":" <> ushow (T.unpack description)
 
-defaultSave :: [T.Text] -> IO ()
-defaultSave datum = do
-  path <- defaultOutPath
+defaultSave :: IO FilePath -> [T.Text] -> IO ()
+defaultSave getPath datum = do
+  path <- getPath
   putStrLn $ "Saving to: " <> path
   saveSearchData wrap path datum
   where
     wrap datum = "export const data = {" <> T.intercalate "," datum <> "}"
 
 main :: IO ()
-main = processHackage defaultProcess defaultSave
+main = do
+  -- processHackage defaultProcess (defaultSave defaultHackageOutPath)
+  processHoogle (defaultSave defaultHoogleOutPat)
