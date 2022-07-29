@@ -26,14 +26,13 @@ export class Compat {
      */
     public static escape(str?: string): string {
         str = str || ""
-        return str
-        // return this.browserType() === "firefox"
-        //      ? str
-        //      : str.replace(/&/g, "&amp;")
-        //           .replace(/</g, "&lt;")
-        //           .replace(/>/g, "&gt;")
-        //           .replace(/"/g, "&quot;")
-        //           .replace(/'/g, "&#039;")
+        return this.browserType() === "firefox"
+             ? str
+             : str.replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/"/g, "&quot;")
+                  .replace(/'/g, "&#039;")
     }
 
     public static normalizedDateString(date: Date): string {
