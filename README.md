@@ -4,10 +4,12 @@ A browser extension to search Haskell words.
 
 ![Search hackage packages](./imgs/package.png)
 
+![Search hackage functions](./imgs/name.png)
+
 ## Supporting Status
 
 - [x] Search hackage packages.
-- [ ] Search hackage functions.
+- [x] Search hackage functions.
 - [ ] Search hackage signatures.
 
 ## Acknowledge
