@@ -20,12 +20,12 @@ import { processCabalData, processHoogleData } from "./util"
             switch (result.resultType) {
                 case ResultType.Package: return {
                     content: `https://hackage.haskell.org/package/${result.path}`,
-                    description: `[package] ${Compat.taggedMatch(Compat.escape(result.content))} - ${Compat.taggedDim(Compat.escape(result.description))}`,
+                    description: `[package] ${Compat.taggedMatch(Compat.escape(result.content))} - ${Compat.taggedDim(result.description)}`,
                     resultType: result.resultType
                     }
                 case ResultType.HoogleFunc: return {
                     content: `https://hackage.haskell.org/package/${result.path}`,
-                    description: `[${result.data ? result.data : "func"}] ${Compat.taggedMatch(Compat.escape(result.content))} - ${Compat.taggedDim(Compat.escape(result.description))}`,
+                    description: `[${result.data ? result.data : "func"}] ${Compat.taggedMatch(Compat.escape(result.content))} - ${Compat.taggedDim(result.description)}`,
                     resultType: result.resultType
                 }
                 case undefined: throw "onFormat: impossible"
