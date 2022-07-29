@@ -44,7 +44,8 @@ export enum ResultType {
 export interface SearchResult extends chrome.omnibox.SuggestResult {
     event?: QueryEvent
     path?: string
-    resultType: ResultType
+    resultType?: ResultType,
+    data?: any // payload for result
 }
 
 export interface StorageItem extends OmniboxContent {
