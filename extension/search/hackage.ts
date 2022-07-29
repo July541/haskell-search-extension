@@ -1,5 +1,6 @@
 import MultiMap from "@github/multimap"
 import { ResultType, SearchResult } from "../../core/types"
+import { ValueItem } from "../types"
 
 interface TempResult {
     key: string,
@@ -14,10 +15,10 @@ interface TempResult {
  *   3. Function signatures
  */
 export class HackageSearcher {
-    private cabalData: MultiMap<string, string>
-    private hoogleFuncData: MultiMap<string, string>
+    private cabalData: MultiMap<string, ValueItem>
+    private hoogleFuncData: MultiMap<string, ValueItem>
 
-    constructor(cabalData: MultiMap<string, string>, hoogleFuncData: MultiMap<string, string>) {
+    constructor(cabalData: MultiMap<string, ValueItem>, hoogleFuncData: MultiMap<string, ValueItem>) {
         this.cabalData = cabalData
         this.hoogleFuncData = hoogleFuncData
     }
@@ -49,29 +50,34 @@ export class HackageSearcher {
         })
     }
 
+    beautyDescription(s: string): string {
+        return s.length === 0 ? "No description avaliable" : s
+    }
+
     constructCabal(key: string): SearchResult[] {
-        return [...this.cabalData.get(key)].map(desc => {
+        return [...this.cabalData.get(key)].map(item => {
             return {
-                content: key,
-                path: key,
-                description: desc,
+                content: item.rendered,
+                path: item.url,
+                description: this.beautyDescription(item.description),
                 resultType: ResultType.Package
             }
         })
     }
 
     constructHoogleFunc(key: string): SearchResult[] {
-        return [...this.hoogleFuncData.get(key)].map(desc => {
+        return [...this.hoogleFuncData.get(key)].map(item => {
             return {
-                content: key,
-                path: desc,
-                description: desc,
-                resultType: ResultType.HoogleFunc
+                content: item.rendered,
+                path: item.url,
+                description: this.beautyDescription(item.description),
+                resultType: ResultType.HoogleFunc,
+                data: item.packageName
             }
         })
     }
 
-    async searchData(keyword: string, results: TempResult[], data: MultiMap<string, string>, resultType: ResultType): Promise<void> {
+    async searchData(keyword: string, results: TempResult[], data: MultiMap<string, ValueItem>, resultType: ResultType): Promise<void> {
         [...data.keys()].forEach((key: string) => {
             if (keyword.length <= key.length) {
                 let matchIndex = key.toLowerCase().indexOf(keyword)

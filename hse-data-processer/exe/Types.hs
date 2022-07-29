@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 module Types where
 
 import qualified Data.Text as T
@@ -71,3 +72,11 @@ data Entry =
   | EModule ModuleName
   | EDecl (Decl ())
   deriving (Show)
+
+data HoogleOutputItem = HOI
+  { key :: T.Text -- ^ Keyword to be matched
+  , rendered :: T.Text -- ^ The rendered content to be displayed
+  , description :: T.Text
+  , url :: URL -- ^ Target URL, pruned the prefix to save memory
+  , package :: T.Text -- ^ The package which the item in
+  } deriving (Show)

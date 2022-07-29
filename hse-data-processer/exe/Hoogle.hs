@@ -1,6 +1,8 @@
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Hoogle where
 import System.IO.Extra (withTempDir, writeFileUTF8)
@@ -22,6 +24,16 @@ import Conduit
       takeExactlyC )
 import qualified Data.Text as T
 import Types
+    ( Ctx(Ctx),
+      Entry(..),
+      Item(..),
+      ModuleName,
+      PackageURL,
+      Sig(Sig),
+      Target(..),
+      Ty(TVar, TCon),
+      URL,
+      HoogleOutputItem(..), targetDocs )
 import qualified Data.ByteString.Lazy as LBS
 -- import qualified Data.ByteString as BS
 import qualified Data.Conduit.Binary as C
@@ -30,7 +42,7 @@ import qualified Data.ByteString.Char8 as BS8
 import qualified Data.ByteString as BS
 import qualified Data.Conduit.List as C
 import Control.Monad.Extra (whenJust)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, fromJust)
 import Data.Char (isSpace, isAlpha, ord, isAscii, isAlphaNum)
 import Data.List.Extra (stripPrefix, isPrefixOf, breakOn, word1, replace, isSuffixOf, isInfixOf, dropPrefix, findIndex, sortOn)
 import Language.Haskell.Exts hiding (ModuleName)
@@ -62,28 +74,74 @@ processHoogle packages save = withTempDir $ \dir -> do
 
   xs <- runConduit $ source .| void (zipFromC 1 .| consume) .| sinkList -- pipelineC 10 (takeExactlyC 100 sinkList)
   print $ length xs
-  ys <- runConduit $ sourceList xs .| collectSearchData .| mapC (\(a, b) -> T.pack $ "[" <> ushow (T.unpack a) <> "," <> ushow b <> "]") .| sinkList
+  ys <- runConduit
+        $ sourceList xs
+        .| collectSearchData
+        .| mapC (\HOI{..} ->
+            T.pack $ "["
+                  <> ushow (T.unpack key)
+                  <> ","
+                  <> ushow (T.unpack rendered)
+                  <> ","
+                  <> ushow (T.unpack description)
+                  <> ","
+                  <> ushow url
+                  <> ","
+                  <> ushow (T.unpack package)
+                  <> "]"
+          )
+        .| sinkList
   print $ length ys
   save ys
-  writeFileUTF8 "./hoogle" (T.unpack $ T.unlines ys)
+  writeFileUTF8 "./hoogle" (unlines $ map show xs)
 
-collectSearchData :: ConduitM (Maybe Target, [Item]) (T.Text, URL) IO ()
+collectSearchData :: ConduitM (Maybe Target, [Item]) HoogleOutputItem IO ()
 collectSearchData = do
   x <- await
-  whenJust x $ \(target, items) -> do
-    whenJust (findName items) $ \name -> whenJust target $ \target -> do
-      let url = prune $ splineURL target
-      yield (name, url)
-    collectSearchData
-  where
-    prune :: URL -> URL
-    prune = dropPrefix "https://hackage.haskell.org/package/"
+  whenJust x $ \x -> case findContentForModuleAndSignature x of
+    Just item -> yield item >> collectSearchData
+    Nothing -> collectSearchData
+
+-- | Drop the prefix to save some memory
+pruneURL :: URL -> URL
+pruneURL = dropPrefix "https://hackage.haskell.org/package/"
 
 splineURL :: Target -> URL
 splineURL (Target url Nothing Nothing _ _ _) = url
 splineURL (Target package (Just (_, base)) Nothing _ _ _) = base <> package
 splineURL (Target func (Just (_, base)) (Just (_, package)) _ _ _)= base <> package <> func
 splineURL _ = error "splineURL: impossible"
+
+-- | We only need module name and signature with its name,
+-- here implementation relies on some observed facts,
+-- see the following code for details.
+findContentForModuleAndSignature :: (Maybe Target, [Item]) -> Maybe HoogleOutputItem
+findContentForModuleAndSignature = \case
+  (Just t@(Target{targetDocs, targetPackage}), [IModule txt]) -> Just
+    $ HOI
+      { key = txt
+      , rendered = txt
+      , description = T.pack targetDocs
+      , url = pruneURL $ splineURL t
+      , package = T.pack $ fst $ fromJust targetPackage -- Use fromJust intentionally, let it crashed if nothing in it
+      }
+  (Just t@(Target{targetItem, targetDocs, targetPackage}), [ISignature sig, IName txt]) -> Just
+    $ HOI
+      { key = txt
+      , rendered = T.pack targetItem
+      , description = T.pack targetDocs
+      , url = pruneURL $ splineURL t
+      , package = T.pack $ fst $ fromJust targetPackage
+      }
+  (Just t@(Target{targetItem, targetDocs, targetPackage}), [IAlias txt _ _]) -> Just
+    $ HOI
+      { key = txt
+      , rendered = T.pack targetItem
+      , description = T.pack targetDocs
+      , url = pruneURL $ splineURL t
+      , package = T.pack $ fst $ fromJust targetPackage
+      }
+  _ -> Nothing
 
 findName :: [Item] -> Maybe T.Text
 findName [] = Nothing
