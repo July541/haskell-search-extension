@@ -2,9 +2,7 @@
 
 A browser extension to search Haskell words.
 
-![Search hackage packages](./imgs/package.png)
-
-![Search hackage functions](./imgs/name.png)
+![Haskell Search Extension](./imgs/demo.png)
 
 ## Supporting Status
 
