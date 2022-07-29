@@ -32,7 +32,7 @@ import qualified Data.Conduit.List as C
 import Control.Monad.Extra (whenJust)
 import Data.Maybe (fromMaybe)
 import Data.Char (isSpace, isAlpha, ord, isAscii, isAlphaNum)
-import Data.List.Extra (stripPrefix, isPrefixOf, breakOn, word1, replace, isSuffixOf, isInfixOf)
+import Data.List.Extra (stripPrefix, isPrefixOf, breakOn, word1, replace, isSuffixOf, isInfixOf, dropPrefix)
 import Language.Haskell.Exts hiding (ModuleName)
 import Data.Generics.Uniplate.Data (transform)
 import Data.String (IsString)
@@ -47,7 +47,7 @@ processHoogle save = withTempDir $ \dir -> do
   -- timing hoogles "https://hackage.haskell.org/packages/hoogle.tar.gz"
   timing hoogles "http://localhost:8000/hoogle.tar.gz"
   tar <- readTarballFiles hoogles
-  tar <- pure $ filter (isSuffixOf "ghc.txt" . fst) tar
+  tar <- pure $ filter (isSuffixOf "/text.txt" . fst) tar
   let
     source :: ConduitT () (T.Text, PackageURL, LBS.ByteString) IO ()
     source = forM_ tar $ \(T.pack . takeBaseName -> name, src) ->
@@ -57,7 +57,7 @@ processHoogle save = withTempDir $ \dir -> do
 
   xs <- runConduit $ source .| void (zipFromC 1 .| consume) .| sinkList -- pipelineC 10 (takeExactlyC 100 sinkList)
   print $ length xs
-  ys <- runConduit $ sourceList xs .| collectSearchData .| mapC (\(a, b) -> T.pack $ ushow (T.unpack a) <> ":" <> ushow b) .| sinkList
+  ys <- runConduit $ sourceList xs .| collectSearchData .| mapC (\(a, b) -> T.pack $ "[" <> ushow (T.unpack a) <> "," <> ushow b <> "]") .| sinkList
   print $ length ys
   save ys
   writeFileUTF8 "./hoogle" (T.unpack $ T.unlines ys)
@@ -67,9 +67,12 @@ collectSearchData = do
   x <- await
   whenJust x $ \(target, items) -> do
     whenJust (findName items) $ \name -> whenJust target $ \target -> do
-      let url = splineURL target
+      let url = prune $ splineURL target
       yield (name, url)
     collectSearchData
+  where
+    prune :: URL -> URL
+    prune = dropPrefix "https://hackage.haskell.org/package/"
 
 splineURL :: Target -> URL
 splineURL (Target url Nothing Nothing _ _ _) = url

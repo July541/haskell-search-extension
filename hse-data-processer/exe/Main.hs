@@ -27,7 +27,7 @@ defaultProcess = processSearchData convert format
     convert name package = SearchData name (packageSynopsis package)
 
     format :: SearchData -> T.Text
-    format SearchData{..} = T.pack $ ushow (T.unpack content) <> ":" <> ushow (T.unpack description)
+    format SearchData{..} = T.pack $ "[" <> ushow (T.unpack content) <> "," <> ushow (T.unpack description) <> "]"
 
 defaultSave :: IO FilePath -> [T.Text] -> IO ()
 defaultSave getPath datum = do
@@ -35,9 +35,9 @@ defaultSave getPath datum = do
   putStrLn $ "Saving to: " <> path
   saveSearchData wrap path datum
   where
-    wrap datum = "export const data = {" <> T.intercalate "," datum <> "}"
+    wrap datum = "export const data = [" <> T.intercalate "," datum <> "]"
 
 main :: IO ()
 main = do
-  -- processHackage defaultProcess (defaultSave defaultHackageOutPath)
+  processHackage defaultProcess (defaultSave defaultHackageOutPath)
   processHoogle (defaultSave defaultHoogleOutPat)

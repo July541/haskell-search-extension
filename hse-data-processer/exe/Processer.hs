@@ -86,7 +86,7 @@ parseCabalTarball tarFile = do
       .| mapMC (evaluate . force)
       .| pipelineC 10
           (mapC (T.pack *** readCabal . LT.toStrict . LT.decodeUtf8With (\_ _ -> Just '\xFFFD'))
-            .| mapMC (evaluate . force)
+            -- .| mapMC (evaluate . force)
             .| consume)
 
 readCabal :: T.Text -> CabalPackage
