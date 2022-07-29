@@ -36,9 +36,15 @@ export interface QueryEventFuncs extends BaseFunctions {
     checkIfIsdefaultSearch?: () => boolean
 }
 
+export enum ResultType {
+    Package,
+    HoogleFunc
+}
+
 export interface SearchResult extends chrome.omnibox.SuggestResult {
     event?: QueryEvent
     path?: string
+    resultType: ResultType
 }
 
 export interface StorageItem extends OmniboxContent {

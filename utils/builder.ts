@@ -88,7 +88,7 @@ export class Builder {
 
     async copyStaticDir(dir: string, browser: Browser): Promise<void> {
         await fs.mkdir(distFullPath(dir, browser), { recursive: true })
-        
+
         if (this.watchFlag) {
             chokidar
                 .watch(path.join(dir, "*"))
