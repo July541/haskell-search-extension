@@ -11,6 +11,8 @@ import Types
 import qualified Data.Text as T
 import Text.Show.Unicode
 import Hoogle (processHoogle)
+import System.Environment (getArgs)
+import System.IO.Extra (readFile')
 
 defaultHackageOutPath = do
   path <- getCurrentDirectory
@@ -37,7 +39,15 @@ defaultSave getPath datum = do
   where
     wrap datum = "export const data = [" <> T.intercalate "," datum <> "]"
 
+loadPackageNames :: FilePath -> IO [String]
+loadPackageNames file = do
+  content <- readFile' file
+  print $ lines content
+  pure $ lines content
+
 main :: IO ()
 main = do
+  args <- getArgs
+  packages <- loadPackageNames (head args)
   processHackage defaultProcess (defaultSave defaultHackageOutPath)
-  processHoogle (defaultSave defaultHoogleOutPat)
+  processHoogle packages (defaultSave defaultHoogleOutPat)

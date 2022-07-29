@@ -7,7 +7,7 @@ import { data as hoogle } from "./data/hoogle"
 import { processMultiKeyData } from "./util"
 
 (async () => {
-    console.log("ok")
+    console.log("load at: ", Date.now())
     const defaultSuggestionDesc = "Incredible search :)"
     const omnibox = new Omnibox(defaultSuggestionDesc, Compat.omniboxPageSize())
     const hackageSearcher = new HackageSearcher(processMultiKeyData(cabal), processMultiKeyData(hoogle))

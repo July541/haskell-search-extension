@@ -32,7 +32,7 @@ import qualified Data.Conduit.List as C
 import Control.Monad.Extra (whenJust)
 import Data.Maybe (fromMaybe)
 import Data.Char (isSpace, isAlpha, ord, isAscii, isAlphaNum)
-import Data.List.Extra (stripPrefix, isPrefixOf, breakOn, word1, replace, isSuffixOf, isInfixOf, dropPrefix)
+import Data.List.Extra (stripPrefix, isPrefixOf, breakOn, word1, replace, isSuffixOf, isInfixOf, dropPrefix, findIndex, sortOn)
 import Language.Haskell.Exts hiding (ModuleName)
 import Data.Generics.Uniplate.Data (transform)
 import Data.String (IsString)
@@ -41,13 +41,18 @@ import Control.DeepSeq (rnf)
 import Data.Bifunctor (second)
 import Text.Show.Unicode (ushow)
 
-processHoogle :: ([T.Text] -> IO ()) -> IO ()
-processHoogle save = withTempDir $ \dir -> do
+processHoogle :: [String] -> ([T.Text] -> IO ()) -> IO ()
+processHoogle packages save = withTempDir $ \dir -> do
   let hoogles = dir </> "haskell-hoogle.tar.gz"
+      wrap txt = "/" <> txt <> ".txt"
+      sortPackages = sortOn (\(x, _) -> findIndex (\p -> wrap p `isSuffixOf` x ) packages)
   -- timing hoogles "https://hackage.haskell.org/packages/hoogle.tar.gz"
   timing hoogles "http://localhost:8000/hoogle.tar.gz"
   tar <- readTarballFiles hoogles
-  tar <- pure $ filter (isSuffixOf "/text.txt" . fst) tar
+  tar <- pure $ filter ((\x -> any (\p -> wrap p `isSuffixOf` x) packages) . fst) tar
+  tar <- pure $ sortPackages tar
+  putStrLn "Loading the following packages:"
+  mapM_ print (zip [1..] (map fst tar))
   let
     source :: ConduitT () (T.Text, PackageURL, LBS.ByteString) IO ()
     source = forM_ tar $ \(T.pack . takeBaseName -> name, src) ->
