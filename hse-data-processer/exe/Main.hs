@@ -4,7 +4,7 @@ module Main where
 
 import Download
 import Processer
-import System.Directory.Extra (getCurrentDirectory)
+import System.Directory.Extra (getCurrentDirectory, createDirectoryIfMissing)
 import System.FilePath
 import qualified Data.Map as Map
 import Types
@@ -16,11 +16,15 @@ import System.IO.Extra (readFile')
 
 defaultHackageOutPath = do
   path <- getCurrentDirectory
-  pure $ path </> ".." </> "extension" </> "data" </> "hackage.ts"
+  let basePath = path </> ".." </> "extension" </> "data"
+  createDirectoryIfMissing False basePath
+  pure $ basePath </> "hackage.ts"
 
 defaultHoogleOutPat = do
   path <- getCurrentDirectory
-  pure $ path </> ".." </> "extension" </> "data" </> "hoogle.ts"
+  let basePath = path </> ".." </> "extension" </> "data"
+  createDirectoryIfMissing False basePath
+  pure $ basePath </> "hoogle.ts"
 
 defaultProcess :: Map.Map PackageName CabalPackage -> [T.Text]
 defaultProcess = processSearchData convert format
