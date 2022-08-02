@@ -12,5 +12,6 @@ const browser: Browser =
 
 const builder = new Builder(browser, watchFlag, devFlag)
 builder.addBuildFile("./extension/main.ts")
+builder.addStaticFile("./logo.png")
 
 builder.build()

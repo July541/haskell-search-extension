@@ -19,6 +19,9 @@
     background: {
       scripts: it._background_scripts,
     },
+    addIcons(icons):: self + {
+      _icons+: icons,
+    },
     addBackgroundScripts(script):: self + {
       _background_scripts+: if std.isArray(script) then script else [script],
     },
