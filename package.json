@@ -4,7 +4,8 @@
     "build": "npx ts-node -T build.ts --firefox",
     "build/dev": "npx ts-node -T build.ts --firefox --watch --dev",
     "run": "npx web-ext run -s dist-firefox",
-    "run/chrome": "npx web-ext run -s dist-firefox -t chromium"
+    "run/chrome": "npx web-ext run -s dist-firefox -t chromium",
+    "publish": "npx web-ext build -s dist-firefox -o"
   },
   "devDependencies": {
     "@hanazuki/node-jsonnet": "^1.0.0",

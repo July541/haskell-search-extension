@@ -8,7 +8,7 @@ A browser extension to search Haskell words.
 
 - [x] Search hackage packages.
 - [x] Search hackage functions.
-- [ ] Search hackage signatures.
+- [ ] Search hackage signatures. (Long way to go, respect Neil more...)
 
 ## Acknowledge
 

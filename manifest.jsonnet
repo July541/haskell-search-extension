@@ -9,8 +9,8 @@ local json = manifest.new(
   name="Haskell Search Extension",
   version="0.0.1",
   keyword="hs",
-  description="The search extension for Haskell language's packages and functions."
-).addIcons(icons())
- .addBackgroundScripts("./extension/main.js");
+  description="The search extension for Haskell language's packages and functions.",
+  service_worker="./extension/main.js"
+).addIcons(icons());
 
 json
