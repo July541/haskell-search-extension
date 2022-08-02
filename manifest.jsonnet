@@ -6,10 +6,10 @@ local icons() = {
 };
 
 local json = manifest.new(
-  name="Haskell Search Extensions",
+  name="Haskell Search Extension",
   version="0.0.1",
   keyword="hs",
-  description="no desc"
+  description="The search extension for Haskell language's packages and functions."
 ).addIcons(icons())
  .addBackgroundScripts("./extension/main.js");
 
