@@ -1,5 +1,7 @@
 # Haskell Search Extension
 
+*DON'T USE, UNDER DEVELOPMENT*
+
 A browser extension to search Haskell words.
 
 ![Haskell Search Extension](./imgs/demo.png)
