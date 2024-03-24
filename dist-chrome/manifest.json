@@ -1,0 +1,12 @@
+{
+    "manifest_version": 3,
+    "name": "Haskell Search Extension",
+    "description": "Search Haskell packages on Hackage",
+    "version": "1.0",
+    "background": {
+        "service_worker": "./main.js"
+    },
+    "omnibox": {
+        "keyword": "hs"
+    }
+}

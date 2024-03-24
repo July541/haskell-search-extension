@@ -1,0 +1,14 @@
+{
+    "scripts": {
+        "build": "npx ts-node -T build.ts",
+        "clean": "rm -rf dist*"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.263",
+        "chokidar": "^3.6.0",
+        "esbuild": "^0.20.2",
+        "fuse.js": "^7.0.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.4.3"
+    }
+}
