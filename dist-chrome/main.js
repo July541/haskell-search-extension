@@ -1331,11 +1331,22 @@
   // extension/Omnibox/index.ts
   var fuse = new Fuse(hackageData, { keys: ["name"] });
   var Omnibox = class {
+    cacheResults = /* @__PURE__ */ new Map();
     bootstrap() {
       chrome.omnibox.onInputChanged.addListener((input, suggest) => {
+        const cache = this.cacheResults.get(input);
+        if (cache) {
+          suggest(cache);
+          return;
+        }
         const res = fuse.search(input).map((x) => x.item);
         const suggestions = res.map((x) => ({ content: x.name, description: x.description }));
+        this.cacheResults.set(input, suggestions);
         suggest(suggestions);
+      });
+      chrome.omnibox.onInputEntered.addListener((input) => {
+        const url = `https://hackage.haskell.org/package/${input}`;
+        chrome.tabs.update({ url });
       });
     }
   };
