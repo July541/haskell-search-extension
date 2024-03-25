@@ -25,13 +25,14 @@ class Builder {
     }
 
     build() {
+        fs.mkdir(this.getOutDir(), { recursive: true });
+        fs.copyFile('./manifest.json', `${this.getOutDir()}/manifest.json`);
         const buildOptions: esbuild.BuildOptions = {
             entryPoints: [this.buildFile],
             bundle: true,
             outdir: this.getOutDir()
         };
         esbuild.build(buildOptions);
-        fs.copyFile('./manifest.json', `${this.getOutDir()}/manifest.json`);
     }
 }
 
