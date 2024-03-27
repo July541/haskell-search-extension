@@ -20,6 +20,7 @@ hackageTarUrl = "https://hackage.haskell.org/index.tar.gz"
 parseCabalTarball :: FilePath -> IO CabalPackage
 parseCabalTarball = undefined
 
+-- | Download the Hackage index tarball if it doesn't exist with timing information
 downloadHackageIndexIfNecessaryWithTiming
   :: FilePath
   -- ^ Path to save the index tarball
@@ -33,6 +34,7 @@ downloadHackageIndexIfNecessary
   -> IO ()
 downloadHackageIndexIfNecessary = downloadHackageIndex False
 
+-- | Download the Hackage index tarball with timing information
 downloadHackageWithTiming
   :: Bool
   -- ^ Always download the index tarball
