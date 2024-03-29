@@ -1,4 +1,5 @@
 module Main where
+import Hackage.Generator (test)
 
 main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main = test

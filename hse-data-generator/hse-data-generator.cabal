@@ -26,12 +26,16 @@ executable hse-data-generator
     -- other-extensions:
     build-depends:
         , base                ^>=4.18.2.0
+        , bytestring
         , conduit
+        , conduit-extra
         , crypton-connection
         , directory
         , extra
         , http-conduit
+        , tar-conduit
         , text
+        , utf8-string
 
     hs-source-dirs:   exe
     default-language: GHC2021

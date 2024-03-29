@@ -2,6 +2,11 @@ module Hackage.Generator where
 
 import Conduit qualified as C
 import Control.Monad (when)
+import Data.ByteString qualified as BS
+import Data.ByteString.UTF8 (toString)
+import Data.Conduit.List qualified as C
+import Data.Conduit.Tar qualified as CT
+import Data.Conduit.Zlib
 import Data.Text qualified as T
 import Network.Connection (TLSSettings (TLSSettingsSimple))
 import Network.HTTP.Conduit qualified as HC
@@ -15,7 +20,26 @@ data CabalPackage = CabalPackage
   deriving (Eq, Show)
 
 hackageTarUrl :: String
-hackageTarUrl = "https://hackage.haskell.org/index.tar.gz"
+hackageTarUrl = "https://hackage.haskell.org/packages/index.tar.gz"
+
+readTarballFiles :: FilePath -> IO [(FilePath, BS.ByteString)]
+readTarballFiles tarFile =
+  C.runResourceT $
+    C.runConduit $
+      C.sourceFile tarFile
+        C..| ungzip
+        C..| CT.untarRaw bundleFileName
+        C..| C.consume
+  where
+    bundleFileName :: CT.FileInfo -> C.ConduitM BS.ByteString (FilePath, BS.ByteString) (C.ResourceT IO) ()
+    bundleFileName = C.mapC . (,) . toString . CT.filePath
+
+test :: IO ()
+test = do
+  downloadHackageIndexIfNecessaryWithTiming "./index.tar.gz"
+  files <- readTarballFiles "./index.tar.gz"
+  print $ map fst files
+  print $ length files
 
 parseCabalTarball :: FilePath -> IO CabalPackage
 parseCabalTarball = undefined
