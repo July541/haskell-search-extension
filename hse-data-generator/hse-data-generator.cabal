@@ -33,9 +33,11 @@ executable hse-data-generator
         , crypton-connection
         , directory
         , extra
+        , filepath
         , http-conduit
         , tar-conduit
         , text
+        , unicode-show
         , utf8-string
 
     hs-source-dirs:   exe

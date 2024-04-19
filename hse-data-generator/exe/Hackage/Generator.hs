@@ -1,10 +1,15 @@
+{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Hackage.Generator where
 
+import Conduit ((.|))
 import Conduit qualified as C
+import Control.Arrow ((***))
 import Control.Monad (when)
+import Control.Monad.IO.Class (liftIO)
+import Data.Bifunctor (Bifunctor (first))
 import Data.ByteString qualified as BS
 import Data.ByteString.UTF8 (toString)
 import Data.Char
@@ -17,15 +22,22 @@ import Data.Text qualified as T
 import Network.Connection (TLSSettings (TLSSettingsSimple))
 import Network.HTTP.Conduit qualified as HC
 import System.Directory
+import System.FilePath (takeBaseName)
 import System.Time.Extra (duration, showDuration)
+import Text.Show.Unicode (ushow)
 
 newtype CabalPackage = CabalPackage
   { packageSynopsis :: T.Text
   }
   deriving (Eq, Show)
 
+type PackageName = T.Text
+
 hackageTarUrl :: String
 hackageTarUrl = "https://hackage.haskell.org/packages/index.tar.gz"
+
+defaultTarFileName :: FilePath
+defaultTarFileName = "./index.tar.gz"
 
 readTarballFiles :: FilePath -> IO [(FilePath, BS.ByteString)]
 readTarballFiles tarFile =
@@ -42,14 +54,22 @@ readTarballFiles tarFile =
 test :: IO ()
 test = do
   downloadHackageIndexIfNecessaryWithTiming "./index.tar.gz"
-  files <- readTarballFiles "./index.tar.gz"
-  print $ map fst files
-  print $ length files
+  mp <- parseCabalTarball "./index.tar.gz"
+  print $ (Map.!) mp "conduit"
+  print $ Map.size mp
 
-parseCabalTarball :: FilePath -> IO CabalPackage
-parseCabalTarball = undefined
-  where
-    f = undefined
+-- files <- readTarballFiles "./index.tar.gz"
+-- print $ map fst files
+-- print $ length files
+
+parseCabalTarball :: FilePath -> IO (Map.Map PackageName CabalPackage)
+parseCabalTarball tarFile = do
+  fmap Map.fromList $
+    C.runConduit $
+      (liftIO (readTarballFiles tarFile) >>= C.sourceList)
+        .| C.mapC (first takeBaseName)
+        .| C.mapC (T.pack *** readCabal . T.pack . toString)
+        .| C.consume
 
 readCabal :: T.Text -> CabalPackage
 readCabal src = CabalPackage{..}
@@ -120,3 +140,18 @@ downloadHackageIndexImpl savePath = do
   C.runResourceT $ do
     response <- HC.http request manager
     C.runConduit $ HC.responseBody response C..| C.sinkFile savePath
+
+{- | Generate a TypeScript file for Hackage packages.
+
+Format should be @export const hackage = [["package name 1", "package synopsis 1"],
+["package name 2", "package synopsis 2"]]@
+-}
+generateTSFileForHackage :: FilePath -> IO ()
+generateTSFileForHackage outTSFile = do
+  downloadHackageIndexIfNecessaryWithTiming defaultTarFileName
+  mp <- parseCabalTarball defaultTarFileName
+  let pkgs = Map.toList mp
+  writeFile outTSFile $
+    "export const hackageRawData = ["
+      <> concatMap (\(name, pkg) -> "[" <> ushow name <> "," <> ushow pkg.packageSynopsis <> "],") pkgs
+      <> "];"

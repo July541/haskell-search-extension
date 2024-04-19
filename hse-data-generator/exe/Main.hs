@@ -1,5 +1,5 @@
 module Main where
-import Hackage.Generator (test)
+import Hackage.Generator (generateTSFileForHackage)
 
 main :: IO ()
-main = test
+main = generateTSFileForHackage "../extension/Omnibox/hackageRawData.ts"
