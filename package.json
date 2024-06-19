@@ -7,7 +7,7 @@
         "@types/chrome": "^0.0.263",
         "chokidar": "^3.6.0",
         "esbuild": "^0.20.2",
-        "fuse.js": "^7.0.0",
+        "fuzzysort": "^3.0.2",
         "ts-node": "^10.9.2",
         "typescript": "^5.4.3"
     }

@@ -1,6 +1,6 @@
-// import { hackageRawData } from "./hackageRawData";
+import { hackageRawData } from "./hackageRawData";
 export class HackageData {
-    name: string;
+    name: string
     description: string;
 
     constructor(name: string, description: string) {
@@ -9,10 +9,5 @@ export class HackageData {
     }
 };
 
-const hackageRawData: string[][] = [
-    ["base", "base description"], ["array", "array description"],
-    ["containers", "containers description"], ["bytestring", "bytestring description"],
-    ["text", "text description"], ["vector", "vector description"]
-];
 export const hackageData: HackageData[] =
     hackageRawData.map(([name, description]) => new HackageData(name, description));
