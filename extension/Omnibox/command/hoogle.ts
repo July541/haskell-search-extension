@@ -34,7 +34,7 @@ export default class HoogleHandler extends CommandHandler {
         chrome.omnibox.setDefaultSuggestion({ description: result.description });
 
         // We don't need to show any suggestions in the dropdown list,
-        // since we have add a default suggestion.
+        // since we have added a default suggestion.
         return [];
     }
 
