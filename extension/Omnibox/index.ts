@@ -1,122 +1,46 @@
 import { hackageData, HackageData } from "./hackageData";
 import fuzzysort from 'fuzzysort';
-import { Compat } from "./Compat";
-import { Hoogle } from "./hoogle";
-
-class PreparedHackageData {
-    name: Fuzzysort.Prepared
-    description: string
-
-    constructor(data: HackageData) {
-        this.name = fuzzysort.prepare(data.name);
-        this.description = data.description;
-    }
-}
-
-const searchTargets = hackageData.map(x => new PreparedHackageData(x));
-
-const PAGE_SIZE: number = 10;
+import { Command, CommandHandler, SearchCache } from "./command/type";
+import PackageHandler from "./command/package";
+import HoogleHandler from "./command/hoogle";
 
 export class Omnibox {
-    // Unused, I'm not sure it's time to optimize
-    // cacheResults: CacheResults = new Map();
-
-    defaultContent: string = "";
-
-    /**
-     * Store the current input for `OnInputChanged` event,
-     * and when `OnInputEntered` event is fired, it will be used to determine whether to use the default content.
-     *
-     * We can use this rely on the fact that through up and down arrow keys, the `OnInputChanged` will not be fired.
-     */
-    currentInput: string = "";
-
-    /**
-     * 0 based
-     */
-    parsePage(input: string): number {
-        return 0;
-    }
+    private cache: SearchCache = new SearchCache();
 
     bootstrap() {
         chrome.omnibox.onInputChanged.addListener((input: string, suggest) => {
-            this.currentInput = input;
+            this.cache.currentInput = input;
 
-            const suggestions = this.searchPackage(input);
+            const handler = this.inferHandler(input);
+            const suggestions = handler.handleChange(input, this.cache);
+
             suggest(suggestions);
         });
 
         chrome.omnibox.onInputEntered.addListener((input: string) => {
-            if (input === this.currentInput) {
-                // If the input is the same as the this.currentInput,
-                // that means the user wants to use the first search result.
-                // So we need to use the default content as the search target(like package name)
-                input = this.defaultContent;
-            }
-
-            if (Hoogle.isHoogleUrl(input)) {
-                chrome.tabs.update({ url: input });
-                return;
-            }
-
-            let url = `https://hackage.haskell.org/package/${input}`;
+            const handler = this.inferHandler(input);
+            const url = handler.handleEnter(input, this.cache);
             chrome.tabs.update({ url });
         });
     }
 
-    /**
-     * Search the package by input.
-     * @param input The search input by the user.
-     * @returns The search result will be displayed in the chrome omnibox.
-     */
-    searchPackage(input: string): chrome.omnibox.SuggestResult[] {
-        const page = this.parsePage(input);
-        const startCount = page * PAGE_SIZE;
-        const endCount = startCount + PAGE_SIZE;
-        const res: HackageData[] = fuzzysort
-            .go(input, searchTargets, { key: "name" })
-            .map(x => new HackageData(x.target, x.obj.description))
-            .slice(startCount, endCount);
-
-        const suggestions: chrome.omnibox.SuggestResult[] = res
-            .map((x: HackageData) => ({
-                content: x.name,
-                description: x.description.length == 0
-                    ? `[package] ${Compat.escape(x.name)}`
-                    : `[package] ${Compat.escape(x.name)} - ${Compat.escape(x.description)}`
-            }));
-
-        this.coreceWithHoogle(suggestions, input);
-        this.adjustSuggestions(suggestions);
-
-        return suggestions;
-    }
-
-    /**
-     * Coerce the suggestions with hoogle search.
-     * @param suggestions Existed suggestions
-     * @param input The user input
-     */
-    coreceWithHoogle(suggestions: chrome.omnibox.SuggestResult[], input: string) {
-        const head = suggestions.shift();
-        suggestions.unshift(Hoogle.hoogleSearch(input));
-
-        if (head) {
-            suggestions.unshift(head);
+    inferHandler(input: string): CommandHandler {
+        const inferCommand = (input: string): Command => {
+            if (HoogleHandler.isHoogleMode(input)) {
+                return Command.SearchHoogle;
+            }
+            return Command.SearchPackage;
         }
-    }
-
-    /**
-     * Cache the content of the first suggestion and set it as the chrome's default suggestion.
-     * @param suggestions
-     */
-    adjustSuggestions(suggestions: chrome.omnibox.SuggestResult[]) {
-        const head = suggestions.shift();
-        if (head) {
-            // Save the content of the first suggestion, so that we can recover it
-            // if the user select the first suggestion while entering.
-            this.defaultContent = head.content;
-            chrome.omnibox.setDefaultSuggestion({ description: head.description });
+        const dispatchCommand = (command: Command): CommandHandler => {
+            switch (command) {
+                case Command.SearchPackage:
+                    return new PackageHandler();
+                case Command.SearchHoogle:
+                    return new HoogleHandler();
+            }
         }
+
+        const command = inferCommand(input);
+        return dispatchCommand(command);
     }
 }
