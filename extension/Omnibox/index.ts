@@ -64,6 +64,11 @@ export class Omnibox {
         });
     }
 
+    /**
+     * Search the package by input.
+     * @param input The search input by the user.
+     * @returns The search result will be displayed in the chrome omnibox.
+     */
     searchPackage(input: string): chrome.omnibox.SuggestResult[] {
         const page = this.parsePage(input);
         const startCount = page * PAGE_SIZE;
@@ -87,6 +92,11 @@ export class Omnibox {
         return suggestions;
     }
 
+    /**
+     * Coerce the suggestions with hoogle search.
+     * @param suggestions Existed suggestions
+     * @param input The user input
+     */
     coreceWithHoogle(suggestions: chrome.omnibox.SuggestResult[], input: string) {
         const head = suggestions.shift();
         suggestions.unshift(Hoogle.hoogleSearch(input));
@@ -96,6 +106,10 @@ export class Omnibox {
         }
     }
 
+    /**
+     * Cache the content of the first suggestion and set it as the chrome's default suggestion.
+     * @param suggestions
+     */
     adjustSuggestions(suggestions: chrome.omnibox.SuggestResult[]) {
         const head = suggestions.shift();
         if (head) {
