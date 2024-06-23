@@ -1,6 +1,6 @@
 import fuzzysort from "fuzzysort";
 import { CommandHandler, SearchCache } from "./type";
-import { HackageData, hackageData } from "../data/hackageData";
+import { HackageData, hackageData } from "../data/hackage/hackageData";
 import { Compat } from "../Compat";
 import HoogleHandler from "./hoogle";
 
