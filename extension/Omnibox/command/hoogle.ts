@@ -1,14 +1,14 @@
 import { CommandHandler, SearchCache } from "./type";
 
 export default class HoogleHandler extends CommandHandler {
-    private static HOOGLE_PREFIX_1: string = ":hoogle";
-    private static HOOGLE_PREFIX_2: string = ":hg";
+    private static HOOGLE_TRIGGER_PREFIX_1: string = ":hoogle";
+    private static HOOGLE_TRIGGER_PREFIX_2: string = ":hg";
     private static HOOGLE_BASE_URL: string = "https://hoogle.haskell.org/?hoogle=";
 
 
     public static isHoogleMode(input: string): boolean {
-        return input.startsWith(HoogleHandler.HOOGLE_PREFIX_1)
-            || input.startsWith(HoogleHandler.HOOGLE_PREFIX_2);
+        return input.startsWith(HoogleHandler.HOOGLE_TRIGGER_PREFIX_1)
+            || input.startsWith(HoogleHandler.HOOGLE_TRIGGER_PREFIX_2);
     }
 
     public static isHoogleUrl(input: string): boolean {
@@ -43,10 +43,10 @@ export default class HoogleHandler extends CommandHandler {
     }
 
     removeHooglePrefix(input: string): string {
-        if (input.startsWith(HoogleHandler.HOOGLE_PREFIX_1)) {
-            return input.slice(HoogleHandler.HOOGLE_PREFIX_1.length).trim();
-        } else if (input.startsWith(HoogleHandler.HOOGLE_PREFIX_2)) {
-            return input.slice(HoogleHandler.HOOGLE_PREFIX_2.length).trim();
+        if (input.startsWith(HoogleHandler.HOOGLE_TRIGGER_PREFIX_1)) {
+            return input.slice(HoogleHandler.HOOGLE_TRIGGER_PREFIX_1.length).trim();
+        } else if (input.startsWith(HoogleHandler.HOOGLE_TRIGGER_PREFIX_2)) {
+            return input.slice(HoogleHandler.HOOGLE_TRIGGER_PREFIX_2.length).trim();
         }
         return input;
     }
