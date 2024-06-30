@@ -3,7 +3,7 @@ import { CommandHandler, SearchCache } from "./type";
 export default class HoogleHandler extends CommandHandler {
   private static HOOGLE_BASE_URL: string = "https://hoogle.haskell.org/?hoogle=";
 
-  private static TRIGGER_PREFIXES: string[] = [":hoogle", "hg"];
+  private static TRIGGER_PREFIXES: string[] = [":hoogle", ":hg"];
 
   public static isHoogleMode(input: string): boolean {
     return this.hasTriggerPrefix(input, ...this.TRIGGER_PREFIXES);
