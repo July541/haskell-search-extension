@@ -45,5 +45,30 @@ export abstract class CommandHandler {
     parsePage(input: string): number {
         return 0;
     }
+
+    /**
+     * Check if the input has a trigger prefix.
+     * @param input The user input.
+     * @param prefixes Trigger prefixes.
+     * @returns
+     */
+    static hasTriggerPrefix(input: string, ...prefixes: string[]): boolean {
+        // We need to add a space after the prefix to avoid the ambiguity.
+        return prefixes.some(prefix => input.startsWith(prefix + ' '));
+    }
+
+    /**
+     * Remove the trigger prefix from the input.
+     * @param input The user input.
+     * @param prefixes Trigger prefixes.
+     */
+    removeTriggerPrefix(input: string, ...prefixes: string[]): string {
+        for (const prefix of prefixes) {
+            if (input.startsWith(prefix + ' ')) { // Note that we need to add a space after the prefix.
+                return input.slice(prefix.length + 1).trim();
+            }
+        }
+        return input;
+    }
 }
 
