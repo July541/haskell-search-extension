@@ -7,3 +7,6 @@ trim_trailing_whitespace = true
 
 [*.hs]
 indent_size = 2
+
+[package.json]
+insert_final_newline = false
