@@ -1,8 +1,8 @@
+import fuzzysort from "fuzzysort";
+import { ExtensionData, extensionData } from "../data/extension/extensionData";
 import { CommandHandler, SearchCache } from "./type";
 
 export default class ExtensionHandler extends CommandHandler {
-  private static EXTENSION_BASE_URL: string = "https://downloads.haskell.org/ghc/latest/docs/users_guide/";
-
   private static TRIGGER_PREFIXES: string[] = [":ext", ":extension", ":lan", ":lang", ":language"];
 
   public static isExtensionMode(input: string): boolean {
@@ -11,8 +11,21 @@ export default class ExtensionHandler extends CommandHandler {
 
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
     const query = this.removeExtensionPrefix(input);
+    const page = this.parsePage(input);
+    const startCount = page * this.PAGE_SIZE;
+    const endCount = startCount + this.PAGE_SIZE;
 
-    throw new Error("Method not implemented.");
+    const suggestExtData: ExtensionData[] = fuzzysort
+      .go(query, extensionData, { key: "name" })
+      .map((x) => x.obj)
+      .slice(startCount, endCount);
+
+    const suggestions = suggestExtData.map((x: ExtensionData) => ({
+      content: x.name,
+      description: `[extension] ${x.name} `,
+    }));
+
+    return suggestions;
   }
   handleEnter(input: string, cache: SearchCache): string {
     throw new Error("Method not implemented.");
