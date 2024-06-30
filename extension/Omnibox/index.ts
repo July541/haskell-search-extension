@@ -1,5 +1,3 @@
-import { hackageData, HackageData } from "./data/hackageData";
-import fuzzysort from 'fuzzysort';
 import { Command, CommandHandler, SearchCache } from "./command/type";
 import PackageHandler from "./command/package";
 import HoogleHandler from "./command/hoogle";
