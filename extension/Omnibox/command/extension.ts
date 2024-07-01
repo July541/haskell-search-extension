@@ -1,6 +1,6 @@
 import fuzzysort from "fuzzysort";
 import { ExtensionData, ExtensionSetVersion, extensionData } from "../data/extension/extensionData";
-import { CommandHandler, SearchCache, Slice } from "./type";
+import { CommandHandler, SearchCache } from "./type";
 import HoogleHandler from "./hoogle";
 
 export default class ExtensionHandler extends CommandHandler {
