@@ -1,6 +1,7 @@
 import { Command, CommandHandler, SearchCache } from "./command/type";
 import PackageHandler from "./command/package";
 import HoogleHandler from "./command/hoogle";
+import ExtensionHandler from "./command/extension";
 
 export class Omnibox {
   private cache: SearchCache = new SearchCache();
@@ -26,6 +27,8 @@ export class Omnibox {
     const inferCommand = (input: string): Command => {
       if (HoogleHandler.isHoogleMode(input)) {
         return Command.SearchHoogle;
+      } else if (ExtensionHandler.isExtensionMode(input)) {
+        return Command.SearchExtension;
       }
       return Command.SearchPackage;
     };
@@ -35,6 +38,8 @@ export class Omnibox {
           return new PackageHandler();
         case Command.SearchHoogle:
           return new HoogleHandler();
+        case Command.SearchExtension:
+          return new ExtensionHandler();
       }
     };
 

@@ -17,6 +17,7 @@ export class SearchCache {
 export enum Command {
   SearchPackage,
   SearchHoogle,
+  SearchExtension,
 }
 
 export abstract class CommandHandler {
@@ -71,4 +72,15 @@ export abstract class CommandHandler {
     }
     return input;
   }
+
+  /**
+   * Give corresponding suggestions by the input.
+   * This function should return the all suggestion without adjusting for omnibox display,
+   * and this function should always be called in `handleChange`, and then adjust the suggestions
+   * in `handleChange`.
+   *
+   * We extract function mainly for testing purpose.
+   * @param input The **original** user input without any modification.
+   */
+  abstract giveSuggestions(input: string): chrome.omnibox.SuggestResult[];
 }

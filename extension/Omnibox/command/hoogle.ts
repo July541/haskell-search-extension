@@ -1,7 +1,7 @@
 import { CommandHandler, SearchCache } from "./type";
 
 export default class HoogleHandler extends CommandHandler {
-  private static HOOGLE_BASE_URL: string = "https://hoogle.haskell.org/?hoogle=";
+  public static HOOGLE_BASE_URL: string = "https://hoogle.haskell.org/?hoogle=";
 
   private static TRIGGER_PREFIXES: string[] = [":hoogle", ":hg"];
 
@@ -27,13 +27,20 @@ export default class HoogleHandler extends CommandHandler {
   }
 
   handleChange(input: string, _cache: SearchCache): chrome.omnibox.SuggestResult[] {
-    const query = this.removeHooglePrefix(input);
-    const result = HoogleHandler.buildHoogleSuggestResult(query);
-    chrome.omnibox.setDefaultSuggestion({ description: result.description });
-
+    const suggestions = this.giveSuggestions(input);
+    const head = suggestions.shift();
+    if (head) {
+      chrome.omnibox.setDefaultSuggestion({ description: head.description });
+    }
     // We don't need to show any suggestions in the dropdown list,
     // since we have added a default suggestion.
-    return [];
+    // Here the `suggestions` should always be empty.
+    return suggestions;
+  }
+
+  giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
+    const query = this.removeHooglePrefix(input);
+    return [HoogleHandler.buildHoogleSuggestResult(query)];
   }
 
   handleEnter(input: string, _cache: SearchCache): string {

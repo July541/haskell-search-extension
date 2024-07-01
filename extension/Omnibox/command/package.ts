@@ -16,7 +16,8 @@ class PreparedHackageData {
 
 export default class PackageHandler extends CommandHandler {
   private searchTargets = hackageData.map((x) => new PreparedHackageData(x));
-  handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
+
+  giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
     const page = this.parsePage(input);
     const startCount = page * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
@@ -35,8 +36,12 @@ export default class PackageHandler extends CommandHandler {
     }));
 
     this.coreceWithHoogle(suggestions, input);
-    this.adjustSuggestions(suggestions, cache);
+    return suggestions;
+  }
 
+  handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
+    const suggestions = this.giveSuggestions(input);
+    this.adjustSuggestions(suggestions, cache);
     return suggestions;
   }
 

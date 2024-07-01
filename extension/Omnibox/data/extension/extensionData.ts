@@ -18,13 +18,13 @@ export class ExtensionData {
   version: string;
   setVersion: ExtensionSetVersion;
   deprecated: boolean;
-  urlSuffix: string;
+  url: string;
 
-  constructor(name: string, version: string, setVersion: ExtensionSetVersion, urlSuffix: string, deprecated: boolean) {
+  constructor(name: string, version: string, setVersion: ExtensionSetVersion, url: string, deprecated: boolean) {
     this.name = name;
     this.version = version;
     this.setVersion = setVersion;
-    this.urlSuffix = urlSuffix;
+    this.url = url;
     this.deprecated = deprecated;
   }
 }
@@ -228,5 +228,3 @@ const rawData = [
 export const extensionData: ExtensionData[] = rawData.map((raw) => {
   return new ExtensionData(raw[0], raw[1], raw[2] as ExtensionSetVersion, raw[3], raw.length === 5);
 });
-
-// [deprecated] {- LANGUAGE OverloadedStrings #-} Since 8.0.1, default starting GHC2021
