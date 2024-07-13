@@ -1,7 +1,8 @@
 import { Command, CommandHandler, SearchCache } from "./command/type";
-import PackageHandler from "./command/package";
+import UnifyHandler from "./command/unify";
 import HoogleHandler from "./command/hoogle";
 import ExtensionHandler from "./command/extension";
+import PackageHandler from "./command/package";
 
 export class Omnibox {
   private cache: SearchCache = new SearchCache();
@@ -29,8 +30,10 @@ export class Omnibox {
         return Command.SearchHoogle;
       } else if (ExtensionHandler.isExtensionMode(input)) {
         return Command.SearchExtension;
+      } else if (PackageHandler.isPackageMode(input)) {
+        return Command.SearchPackage;
       }
-      return Command.SearchPackage;
+      return Command.SearchDefault;
     };
     const dispatchCommand = (command: Command): CommandHandler => {
       switch (command) {
@@ -40,6 +43,8 @@ export class Omnibox {
           return new HoogleHandler();
         case Command.SearchExtension:
           return new ExtensionHandler();
+        case Command.SearchDefault:
+          return new UnifyHandler();
       }
     };
 

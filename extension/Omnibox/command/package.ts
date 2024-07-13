@@ -1,8 +1,7 @@
 import fuzzysort from "fuzzysort";
-import { CommandHandler, SearchCache } from "./type";
 import { HackageData, hackageData } from "../data/hackage/hackageData";
+import { CommandHandler, SearchCache } from "./type";
 import { Compat } from "../Compat";
-import HoogleHandler from "./hoogle";
 
 class PreparedHackageData {
   name: Fuzzysort.Prepared;
@@ -16,27 +15,10 @@ class PreparedHackageData {
 
 export default class PackageHandler extends CommandHandler {
   private searchTargets = hackageData.map((x) => new PreparedHackageData(x));
+  private static TRIGGER_PREFIXES: string[] = [":package", ":pkg"];
 
-  giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
-    const page = this.parsePage(input);
-    const startCount = page * this.PAGE_SIZE;
-    const endCount = startCount + this.PAGE_SIZE;
-
-    const suggestHackageData: HackageData[] = fuzzysort
-      .go(input, this.searchTargets, { key: "name" })
-      .map((x) => new HackageData(x.target, x.obj.description))
-      .slice(startCount, endCount);
-
-    const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData.map((x: HackageData) => ({
-      content: x.name,
-      description:
-        x.description.length == 0
-          ? `[package] ${Compat.escape(x.name)}`
-          : `[package] ${Compat.escape(x.name)} - ${Compat.escape(x.description)}`,
-    }));
-
-    this.coreceWithHoogle(suggestions, input);
-    return suggestions;
+  public static isPackageMode(input: string): boolean {
+    return this.hasTriggerPrefix(input, ...PackageHandler.TRIGGER_PREFIXES);
   }
 
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
@@ -52,37 +34,31 @@ export default class PackageHandler extends CommandHandler {
       // So we need to use the default content as the search target(like package name)
       input = cache.defaultContent;
     }
-
-    // If the suggestion list is not empty, that means the user select hoogle
-    // by pressing up and down arrow keys, that promise the input must be a hoogle url.
-    // If the suggestion list is empty, function `adjustSuggestions` will save the
-    // hoogle url to cache.defaultContent, since there is no other suggestion,
-    // the input must equal to cache.currentInput, that will make the input be
-    // assigned to cache.defaultContent, in which case the input will be a hoogle url.
-    //
-    // Note that there has an assumption that modifying the content of the
-    // `chrome.omnibox.SuggestionResult` won't affect the user's current input
-    // in the omnibox.
-    if (HoogleHandler.isHoogleUrl(input)) {
-      return input;
-    }
-
-    const url = `https://hackage.haskell.org/package/${input}`;
+    const query = this.removeExtensionPrefix(input);
+    const url = `https://hackage.haskell.org/package/${query}`;
     return url;
   }
 
-  /**
-   * Coerce the suggestions with hoogle search.
-   * @param suggestions Existed suggestions
-   * @param input The user input
-   */
-  coreceWithHoogle(suggestions: chrome.omnibox.SuggestResult[], input: string) {
-    const head = suggestions.shift();
-    suggestions.unshift(HoogleHandler.buildHoogleSuggestResult(input));
+  giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
+    const query = this.removeExtensionPrefix(input);
+    const page = this.parsePage(query);
+    const startCount = page * this.PAGE_SIZE;
+    const endCount = startCount + this.PAGE_SIZE;
 
-    if (head) {
-      suggestions.unshift(head);
-    }
+    const suggestHackageData: HackageData[] = fuzzysort
+      .go(query, this.searchTargets, { key: "name" })
+      .map((x) => new HackageData(x.target, x.obj.description))
+      .slice(startCount, endCount);
+
+    const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData.map((x: HackageData) => ({
+      content: x.name,
+      description:
+        x.description.length == 0
+          ? `[package] ${Compat.escape(x.name)}`
+          : `[package] ${Compat.escape(x.name)} - ${Compat.escape(x.description)}`,
+    }));
+
+    return suggestions;
   }
 
   /**
@@ -98,5 +74,9 @@ export default class PackageHandler extends CommandHandler {
       cache.defaultContent = head.content;
       chrome.omnibox.setDefaultSuggestion({ description: head.description });
     }
+  }
+
+  removeExtensionPrefix(input: string): string {
+    return this.removeTriggerPrefix(input, ...PackageHandler.TRIGGER_PREFIXES);
   }
 }

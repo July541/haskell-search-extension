@@ -18,6 +18,7 @@ export enum Command {
   SearchPackage,
   SearchHoogle,
   SearchExtension,
+  SearchDefault,
 }
 
 export abstract class CommandHandler {
