@@ -31,6 +31,13 @@ describe("package", () => {
     });
   });
 
+  it("next page", () => {
+    testSuggestion0(":pkg arr-", new PackageHandler(), {
+      content: "array-memoize",
+      description: "[package] array-memoize - Memoization combinators using arrays for finite sub-domains of functions",
+    });
+  });
+
   // I don't want to perform the following tests because of https://stackoverflow.com/questions/78744243/jest-has-different-behavior-in-watch-mode
 
   // it("Package search default value", () => {

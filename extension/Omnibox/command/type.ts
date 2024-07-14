@@ -45,7 +45,15 @@ export abstract class CommandHandler {
    * @returns
    */
   parsePage(input: string): number {
-    return 0;
+    let cnt = 0;
+    for (const c of [...input].reverse()) {
+      if (c === "-") {
+        cnt++;
+      } else {
+        break;
+      }
+    }
+    return cnt;
   }
 
   /**
