@@ -1,5 +1,5 @@
 import HoogleHandler from "../extension/omnibox/command/hoogle";
-import { SearchCache } from "../extension/omnibox/command/type";
+import { testSuggestion0 } from "./util";
 
 describe("hoogle", () => {
   it(":hg trigger", () => {
@@ -23,14 +23,9 @@ describe("hoogle", () => {
   });
 
   it("hoogle url with :hoogle", () => {
-    const handler = new HoogleHandler();
-    const query = handler.removeHooglePrefix(":hoogle arrow");
-    const result = handler.giveSuggestions(query);
-    expect(result).toEqual([
-      {
-        content: "https://hoogle.haskell.org/?hoogle=arrow",
-        description: "Search arrow on [hoogle.haskell.org]",
-      },
-    ]);
+    testSuggestion0(":hoogle arrow", new HoogleHandler(), {
+      content: "https://hoogle.haskell.org/?hoogle=arrow",
+      description: "Search arrow on [hoogle.haskell.org]",
+    });
   });
 });

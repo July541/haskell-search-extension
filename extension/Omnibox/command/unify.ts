@@ -35,12 +35,12 @@ export default class UnifyHandler extends CommandHandler {
           : `[package] ${Compat.escape(x.name)} - ${Compat.escape(x.description)}`,
     }));
 
-    this.coreceWithHoogle(suggestions, input);
     return suggestions;
   }
 
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
     const suggestions = this.giveSuggestions(input);
+    this.coreceWithHoogle(suggestions, input);
     this.adjustSuggestions(suggestions, cache);
     return suggestions;
   }

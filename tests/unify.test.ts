@@ -1,14 +1,12 @@
 import UnifyHandler from "../extension/omnibox/command/unify";
 import { SearchCache } from "../extension/omnibox/command/type";
+import { testSuggestion0 } from "./util";
 
 describe("package", () => {
   it("Basic package search", () => {
-    const input = "arr";
-    const handler = new UnifyHandler();
-    const suggest = handler.handleChange(input, new SearchCache());
-    expect(suggest[0]).toEqual({
-      content: "https://hoogle.haskell.org/?hoogle=arr",
-      description: "Search arr on [hoogle.haskell.org]",
+    testSuggestion0("arr", new UnifyHandler(), {
+      content: "array",
+      description: "[package] array - Mutable and immutable arrays",
     });
   });
 });

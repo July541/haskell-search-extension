@@ -1,18 +1,17 @@
 import { CommandHandler, SearchCache } from "../extension/omnibox/command/type";
 
-/**
- * Test the `handleChange` method if give the expected result.
- *
- * **NOTE: the suggest[0] turns to the second suggestion in the omnibox
- * sice the first is in the default.**
- * @param input The original user input
- * @param handler
- * @param expected
- */
-export function testHandleChange(input: string, handler: CommandHandler, expected: chrome.omnibox.SuggestResult) {
-  const cache = new SearchCache();
+export function testSuggestion(
+  input: string,
+  handler: CommandHandler,
+  index: number,
+  expected: chrome.omnibox.SuggestResult
+) {
   const suggest = handler.giveSuggestions(input);
-  expect(suggest[0]).toEqual(expected);
+  expect(suggest[index]).toEqual(expected);
+}
+
+export function testSuggestion0(input: string, handler: CommandHandler, expected: chrome.omnibox.SuggestResult) {
+  testSuggestion(input, handler, 0, expected);
 }
 
 /**
