@@ -47,15 +47,17 @@ export default class PackageHandler extends CommandHandler {
 
     const suggestHackageData: HackageData[] = fuzzysort
       .go(query, this.searchTargets, { key: "name" })
-      .map((x) => new HackageData(x.target, x.obj.description))
+      .map((x) => {
+        const name = x.highlight("<match>", "</match>");
+        const desp = Compat.escape(x.obj.description);
+        const omniboxDescription = desp.length === 0 ? `[package] ${name}` : `[package] ${name} - ${desp}`;
+        return new HackageData(x.obj.name.target, omniboxDescription);
+      })
       .slice(startCount, endCount);
 
     const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData.map((x: HackageData) => ({
       content: x.name,
-      description:
-        x.description.length == 0
-          ? `[package] ${Compat.escape(x.name)}`
-          : `[package] ${Compat.escape(x.name)} - ${Compat.escape(x.description)}`,
+      description: x.description,
     }));
 
     return suggestions;

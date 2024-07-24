@@ -20,21 +20,22 @@ describe("package", () => {
   it("Package search with :pkg", () => {
     testSuggestion0(":pkg arr", new PackageHandler(), {
       content: "array",
-      description: "[package] array - Mutable and immutable arrays",
+      description: "[package] <match>arr</match>ay - Mutable and immutable arrays",
     });
   });
 
   it("Package search with :package", () => {
     testSuggestion0(":package arr", new PackageHandler(), {
       content: "array",
-      description: "[package] array - Mutable and immutable arrays",
+      description: "[package] <match>arr</match>ay - Mutable and immutable arrays",
     });
   });
 
   it("next page", () => {
     testSuggestion0(":pkg arr-", new PackageHandler(), {
       content: "array-memoize",
-      description: "[package] array-memoize - Memoization combinators using arrays for finite sub-domains of functions",
+      description:
+        "[package] <match>arr</match>ay<match>-</match>memoize - Memoization combinators using arrays for finite sub-domains of functions",
     });
   });
 
