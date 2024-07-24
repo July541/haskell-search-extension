@@ -46,7 +46,7 @@ export default class PackageHandler extends CommandHandler {
     const endCount = startCount + this.PAGE_SIZE;
 
     const suggestHackageData: HackageData[] = fuzzysort
-      .go(query, this.searchTargets, { key: "name" })
+      .go(query, this.searchTargets, { key: "name", all: true })
       .map((x) => {
         const name = x.highlight("<match>", "</match>");
         const desp = Compat.escape(x.obj.description);

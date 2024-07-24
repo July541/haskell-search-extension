@@ -2,6 +2,11 @@ import PackageHandler from "../extension/omnibox/command/package";
 import { testSuggestion0 } from "./util";
 
 describe("package", () => {
+  it(":pkg", () => {
+    const input = ":pkg";
+    expect(PackageHandler.isPackageMode(input)).toBe(true);
+  });
+
   it(":pkg trigger", () => {
     const input = ":pkg arrow";
     expect(PackageHandler.isPackageMode(input)).toBe(true);

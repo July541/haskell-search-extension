@@ -63,8 +63,7 @@ export abstract class CommandHandler {
    * @returns
    */
   static hasTriggerPrefix(input: string, ...prefixes: string[]): boolean {
-    // We need to add a space after the prefix to avoid the ambiguity.
-    return prefixes.some((prefix) => input.startsWith(prefix + " "));
+    return prefixes.some((prefix) => input.startsWith(prefix));
   }
 
   /**
@@ -77,6 +76,8 @@ export abstract class CommandHandler {
       if (input.startsWith(prefix + " ")) {
         // Note that we need to add a space after the prefix.
         return input.slice(prefix.length + 1).trim();
+      } else if (input.startsWith(prefix)) {
+        return input.slice(prefix.length).trim();
       }
     }
     return input;

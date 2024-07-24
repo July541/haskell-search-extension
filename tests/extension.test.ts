@@ -2,6 +2,11 @@ import ExtensionHandler from "../extension/omnibox/command/extension";
 import { testSuggestion0 } from "./util";
 
 describe("extension", () => {
+  it(":ext", () => {
+    const input = ":ext";
+    expect(ExtensionHandler.isExtensionMode(input)).toBe(true);
+  });
+
   it(":ext trigger", () => {
     const input = ":ext arrow";
     expect(ExtensionHandler.isExtensionMode(input)).toBe(true);

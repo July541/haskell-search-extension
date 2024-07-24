@@ -1,9 +1,12 @@
 import { CommandHandler, SearchCache } from "./type";
 
 export default class HoogleHandler extends CommandHandler {
-  public static HOOGLE_BASE_URL: string = "https://hoogle.haskell.org/?hoogle=";
+  private static HOOGLE_URL: string = "https://hoogle.haskell.org";
+  public static HOOGLE_BASE_URL: string = `${this.HOOGLE_URL}/?hoogle=`;
 
   private static TRIGGER_PREFIXES: string[] = [":hoogle", ":hg"];
+
+  private static HOOGLE_DEFAULT_DESCRIPTION: string = "Continue typing or press entering to hoogle.com";
 
   public static isHoogleMode(input: string): boolean {
     return this.hasTriggerPrefix(input, ...this.TRIGGER_PREFIXES);
@@ -40,6 +43,10 @@ export default class HoogleHandler extends CommandHandler {
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
     const query = this.removeHooglePrefix(input);
+    console.log(query);
+    if (query.length === 0) {
+      return [{ content: HoogleHandler.HOOGLE_URL, description: HoogleHandler.HOOGLE_DEFAULT_DESCRIPTION }];
+    }
     return [HoogleHandler.buildHoogleSuggestResult(query)];
   }
 
