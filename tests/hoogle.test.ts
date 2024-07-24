@@ -27,14 +27,14 @@ describe("hoogle", () => {
   it("hoogle url with :hg", () => {
     testSuggestion0(":hg arrow", new HoogleHandler(), {
       content: "https://hoogle.haskell.org/?hoogle=arrow",
-      description: "Search arrow on [hoogle.haskell.org]",
+      description: "Search <match>arrow</match> on [hoogle.haskell.org]",
     });
   });
 
   it("hoogle url with :hoogle", () => {
     testSuggestion0(":hoogle arrow", new HoogleHandler(), {
       content: "https://hoogle.haskell.org/?hoogle=arrow",
-      description: "Search arrow on [hoogle.haskell.org]",
+      description: "Search <match>arrow</match> on [hoogle.haskell.org]",
     });
   });
 });

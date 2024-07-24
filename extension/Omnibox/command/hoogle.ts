@@ -1,3 +1,4 @@
+import { Compat } from "../Compat";
 import { CommandHandler, SearchCache } from "./type";
 
 export default class HoogleHandler extends CommandHandler {
@@ -25,7 +26,7 @@ export default class HoogleHandler extends CommandHandler {
   public static buildHoogleSuggestResult(query: string): chrome.omnibox.SuggestResult {
     return {
       content: HoogleHandler.HOOGLE_BASE_URL + query,
-      description: `Search ${query} on [hoogle.haskell.org]`,
+      description: `Search ${Compat.taggedMatch(query)} on [hoogle.haskell.org]`,
     };
   }
 
