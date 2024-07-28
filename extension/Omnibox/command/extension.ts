@@ -5,7 +5,7 @@ import HoogleHandler from "./hoogle";
 
 export default class ExtensionHandler extends CommandHandler {
   private static DEFAULE_TRIGGER_PREFIX: string = ":ext";
-  private static TRIGGER_PREFIXES: string[] = [
+  public static TRIGGER_PREFIXES: string[] = [
     ExtensionHandler.DEFAULE_TRIGGER_PREFIX,
     ":extension",
     ":lan",

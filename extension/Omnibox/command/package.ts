@@ -15,7 +15,7 @@ class PreparedHackageData {
 
 export default class PackageHandler extends CommandHandler {
   private searchTargets = hackageData.map((x) => new PreparedHackageData(x));
-  private static TRIGGER_PREFIXES: string[] = [":package", ":pkg"];
+  public static TRIGGER_PREFIXES: string[] = [":package", ":pkg"];
 
   public static isPackageMode(input: string): boolean {
     return this.hasTriggerPrefix(input, ...PackageHandler.TRIGGER_PREFIXES);

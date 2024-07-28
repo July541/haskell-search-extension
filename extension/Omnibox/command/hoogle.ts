@@ -5,7 +5,7 @@ export default class HoogleHandler extends CommandHandler {
   private static HOOGLE_URL: string = "https://hoogle.haskell.org";
   public static HOOGLE_BASE_URL: string = `${this.HOOGLE_URL}/?hoogle=`;
 
-  private static TRIGGER_PREFIXES: string[] = [":hoogle", ":hg"];
+  public static TRIGGER_PREFIXES: string[] = [":hoogle", ":hg"];
 
   private static HOOGLE_DEFAULT_DESCRIPTION: string = "Continue typing or press entering to hoogle.com";
 

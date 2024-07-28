@@ -3,6 +3,7 @@ import UnifyHandler from "./command/unify";
 import HoogleHandler from "./command/hoogle";
 import ExtensionHandler from "./command/extension";
 import PackageHandler from "./command/package";
+import MetaHandler from "./command/meta";
 
 export class Omnibox {
   private cache: SearchCache = new SearchCache();
@@ -19,6 +20,10 @@ export class Omnibox {
 
     chrome.omnibox.onInputEntered.addListener((input: string) => {
       const handler = this.inferHandler(input);
+      if (handler instanceof MetaHandler) {
+        return;
+      }
+
       const url = handler.handleEnter(input, this.cache);
       chrome.tabs.update({ url });
     });
@@ -32,6 +37,8 @@ export class Omnibox {
         return Command.SearchExtension;
       } else if (PackageHandler.isPackageMode(input)) {
         return Command.SearchPackage;
+      } else if (MetaHandler.isMetaMode(input)) {
+        return Command.SearchMeta;
       }
       return Command.SearchDefault;
     };
@@ -45,6 +52,8 @@ export class Omnibox {
           return new ExtensionHandler();
         case Command.SearchDefault:
           return new UnifyHandler();
+        case Command.SearchMeta:
+          return new MetaHandler();
       }
     };
 
