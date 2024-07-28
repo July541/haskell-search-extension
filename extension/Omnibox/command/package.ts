@@ -15,10 +15,10 @@ class PreparedHackageData {
 
 export default class PackageHandler extends CommandHandler {
   private searchTargets = hackageData.map((x) => new PreparedHackageData(x));
-  public static TRIGGER_PREFIXES: string[] = [":package", ":pkg"];
+  public static TRIGGER_PREFIX: string = ":pkg";
 
   public static isPackageMode(input: string): boolean {
-    return this.hasTriggerPrefix(input, ...PackageHandler.TRIGGER_PREFIXES);
+    return this.hasTriggerPrefix(input, PackageHandler.TRIGGER_PREFIX);
   }
 
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
@@ -79,6 +79,6 @@ export default class PackageHandler extends CommandHandler {
   }
 
   removeExtensionPrefix(input: string): string {
-    return this.removeTriggerPrefix(input, ...PackageHandler.TRIGGER_PREFIXES);
+    return this.removeTriggerPrefix(input, PackageHandler.TRIGGER_PREFIX);
   }
 }

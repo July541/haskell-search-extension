@@ -12,25 +12,8 @@ describe("package", () => {
     expect(PackageHandler.isPackageMode(input)).toBe(true);
   });
 
-  it(":package trigger", () => {
-    const input = ":package arrow";
-    expect(PackageHandler.isPackageMode(input)).toBe(true);
-  });
-
-  it("not trigger", () => {
-    const input = ":pack arrow";
-    expect(PackageHandler.isPackageMode(input)).toBe(false);
-  });
-
   it("Package search with :pkg", () => {
     testSuggestion0(":pkg arr", new PackageHandler(), {
-      content: "array",
-      description: "[package] <match>arr</match>ay - Mutable and immutable arrays",
-    });
-  });
-
-  it("Package search with :package", () => {
-    testSuggestion0(":package arr", new PackageHandler(), {
       content: "array",
       description: "[package] <match>arr</match>ay - Mutable and immutable arrays",
     });

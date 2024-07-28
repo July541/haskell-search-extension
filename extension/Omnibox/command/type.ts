@@ -63,8 +63,8 @@ export abstract class CommandHandler {
    * @param prefixes Trigger prefixes.
    * @returns
    */
-  static hasTriggerPrefix(input: string, ...prefixes: string[]): boolean {
-    return prefixes.some((prefix) => input.startsWith(prefix));
+  static hasTriggerPrefix(input: string, prefix: string): boolean {
+    return input.startsWith(prefix);
   }
 
   /**
@@ -72,14 +72,12 @@ export abstract class CommandHandler {
    * @param input The user input.
    * @param prefixes Trigger prefixes.
    */
-  removeTriggerPrefix(input: string, ...prefixes: string[]): string {
-    for (const prefix of prefixes) {
-      if (input.startsWith(prefix + " ")) {
-        // Note that we need to add a space after the prefix.
-        return input.slice(prefix.length + 1).trim();
-      } else if (input.startsWith(prefix)) {
-        return input.slice(prefix.length).trim();
-      }
+  removeTriggerPrefix(input: string, prefix: string): string {
+    if (input.startsWith(prefix + " ")) {
+      // Note that we need to add a space after the prefix.
+      return input.slice(prefix.length + 1).trim();
+    } else if (input.startsWith(prefix)) {
+      return input.slice(prefix.length).trim();
     }
     return input;
   }

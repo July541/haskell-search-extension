@@ -5,12 +5,12 @@ export default class HoogleHandler extends CommandHandler {
   private static HOOGLE_URL: string = "https://hoogle.haskell.org";
   public static HOOGLE_BASE_URL: string = `${this.HOOGLE_URL}/?hoogle=`;
 
-  public static TRIGGER_PREFIXES: string[] = [":hoogle", ":hg"];
+  public static TRIGGER_PREFIX: string = ":hg";
 
   private static HOOGLE_DEFAULT_DESCRIPTION: string = "Continue typing or press entering to hoogle.com";
 
   public static isHoogleMode(input: string): boolean {
-    return this.hasTriggerPrefix(input, ...this.TRIGGER_PREFIXES);
+    return this.hasTriggerPrefix(input, this.TRIGGER_PREFIX);
   }
 
   public static isHoogleUrl(input: string): boolean {
@@ -56,6 +56,6 @@ export default class HoogleHandler extends CommandHandler {
   }
 
   removeHooglePrefix(input: string): string {
-    return this.removeTriggerPrefix(input, ...HoogleHandler.TRIGGER_PREFIXES);
+    return this.removeTriggerPrefix(input, HoogleHandler.TRIGGER_PREFIX);
   }
 }

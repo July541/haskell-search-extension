@@ -4,23 +4,16 @@ import { CommandHandler, SearchCache } from "./type";
 import HoogleHandler from "./hoogle";
 
 export default class ExtensionHandler extends CommandHandler {
-  private static DEFAULE_TRIGGER_PREFIX: string = ":ext";
-  public static TRIGGER_PREFIXES: string[] = [
-    ExtensionHandler.DEFAULE_TRIGGER_PREFIX,
-    ":extension",
-    ":lan",
-    ":lang",
-    ":language",
-  ];
+  public static TRIGGER_PREFIX: string = ":ext";
   private static EXT_MAP: Map<string, string> = new Map(extensionData.map((x) => [x.name, x.url]));
 
   public static isExtensionMode(input: string): boolean {
-    return this.hasTriggerPrefix(input, ...ExtensionHandler.TRIGGER_PREFIXES);
+    return this.hasTriggerPrefix(input, this.TRIGGER_PREFIX);
   }
 
   private static extensionToSuggestResult(extension: ExtensionData): chrome.omnibox.SuggestResult {
     return {
-      content: ExtensionHandler.DEFAULE_TRIGGER_PREFIX + " " + extension.name, // Add <:ext > prefix to make sure that the `handleChange` works.
+      content: ExtensionHandler.TRIGGER_PREFIX + " " + extension.name, // Add <:ext > prefix to make sure that the `handleChange` works.
       description: `${extension.deprecated ? "[deprecated] " : ""}{-# LANGUAGE ${extension.name} #-} Since ${
         extension.version
       }${
@@ -49,7 +42,7 @@ export default class ExtensionHandler extends CommandHandler {
   }
 
   removeExtensionPrefix(input: string): string {
-    return this.removeTriggerPrefix(input, ...ExtensionHandler.TRIGGER_PREFIXES);
+    return this.removeTriggerPrefix(input, ExtensionHandler.TRIGGER_PREFIX);
   }
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {

@@ -12,25 +12,6 @@ describe("extension", () => {
     expect(ExtensionHandler.isExtensionMode(input)).toBe(true);
   });
 
-  it(":extension trigger", () => {
-    const input = ":extension arrow";
-    expect(ExtensionHandler.isExtensionMode(input)).toBe(true);
-  });
-
-  it(":lan trigger", () => {
-    const input = ":lan arrow";
-    expect(ExtensionHandler.isExtensionMode(input)).toBe(true);
-  });
-
-  it(":lang trigger", () => {
-    const input = ":lang arrow";
-    expect(ExtensionHandler.isExtensionMode(input)).toBe(true);
-  });
-
-  it(":language trigger", () => {
-    const input = ":language arrow";
-    expect(ExtensionHandler.isExtensionMode(input)).toBe(true);
-  });
   it("default behavior", () => {
     testSuggestion0(":ext ", new ExtensionHandler(), {
       content: ":ext AllowAmbiguousTypes",

@@ -20,14 +20,6 @@ describe("meta", () => {
     });
   });
 
-  it(":package", () => {
-    const input = ":package";
-    testSuggestion0(input, new MetaHandler(), {
-      content: ":package",
-      description: "<match>:package</match> - Search Hackage packages.",
-    });
-  });
-
   it(":h", () => {
     const input = ":h";
     testSuggestion0(input, new MetaHandler(), {
@@ -44,43 +36,11 @@ describe("meta", () => {
     });
   });
 
-  it(":hoogle", () => {
-    const input = ":hoogle";
+  it(":ext", () => {
+    const input = ":ext";
     testSuggestion0(input, new MetaHandler(), {
-      content: ":hoogle",
-      description: "<match>:hoogle</match> - Search on hoogle",
-    });
-  });
-
-  it(":extension", () => {
-    const input = ":extension";
-    testSuggestion0(input, new MetaHandler(), {
-      content: ":extension",
-      description: "<match>:extension</match> - Search Haskell language extensions",
-    });
-  });
-
-  it(":lan", () => {
-    const input = ":lan";
-    testSuggestion0(input, new MetaHandler(), {
-      content: ":lan",
-      description: "<match>:lan</match> - Search Haskell language extensions",
-    });
-  });
-
-  it(":lang", () => {
-    const input = ":lang";
-    testSuggestion0(input, new MetaHandler(), {
-      content: ":lang",
-      description: "<match>:lang</match> - Search Haskell language extensions",
-    });
-  });
-
-  it(":language", () => {
-    const input = ":language";
-    testSuggestion0(input, new MetaHandler(), {
-      content: ":language",
-      description: "<match>:language</match> - Search Haskell language extensions",
+      content: ":ext",
+      description: "<match>:ext</match> - Search Haskell language extensions",
     });
   });
 });

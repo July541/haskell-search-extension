@@ -6,16 +6,16 @@ import { CommandHandler, SearchCache } from "./type";
 import { Compat } from "../Compat";
 
 export default class MetaHandler extends CommandHandler {
-  private static TRIGGER_PREFIXES: string[] = [":"];
+  private static TRIGGER_PREFIX: string = ":";
 
   private static META_ITEMS: string[] = [
-    ...PackageHandler.TRIGGER_PREFIXES,
-    ...ExtensionHandler.TRIGGER_PREFIXES,
-    ...HoogleHandler.TRIGGER_PREFIXES,
+    PackageHandler.TRIGGER_PREFIX,
+    ExtensionHandler.TRIGGER_PREFIX,
+    HoogleHandler.TRIGGER_PREFIX,
   ];
 
   public static isMetaMode(input: string): boolean {
-    return this.hasTriggerPrefix(input, ...this.TRIGGER_PREFIXES);
+    return this.hasTriggerPrefix(input, this.TRIGGER_PREFIX);
   }
 
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
@@ -39,11 +39,11 @@ export default class MetaHandler extends CommandHandler {
   }
 
   private commandDescription(key: string): string {
-    if (PackageHandler.TRIGGER_PREFIXES.includes(key)) {
+    if (key === PackageHandler.TRIGGER_PREFIX) {
       return "Search Hackage packages.";
-    } else if (ExtensionHandler.TRIGGER_PREFIXES.includes(key)) {
+    } else if (key === ExtensionHandler.TRIGGER_PREFIX) {
       return "Search Haskell language extensions";
-    } else if (HoogleHandler.TRIGGER_PREFIXES.includes(key)) {
+    } else if (key === HoogleHandler.TRIGGER_PREFIX) {
       return "Search on hoogle";
     }
     return "Unexpected command: " + key;
