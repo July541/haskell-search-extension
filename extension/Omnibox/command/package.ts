@@ -41,7 +41,7 @@ export default class PackageHandler extends CommandHandler {
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
     const query = this.removeExtensionPrefix(input);
-    const page = this.parsePage(query);
+    const [page, _] = this.parsePage(query);
     const startCount = page * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
 

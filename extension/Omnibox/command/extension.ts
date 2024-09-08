@@ -6,6 +6,8 @@ import HoogleHandler from "./hoogle";
 export default class ExtensionHandler extends CommandHandler {
   public static TRIGGER_PREFIX: string = ":ext";
   private static EXT_MAP: Map<string, string> = new Map(extensionData.map((x) => [x.name, x.url]));
+  private curPage: number = 0;
+  private totalPages = Math.ceil(extensionData.length / this.PAGE_SIZE);
 
   public static isExtensionMode(input: string): boolean {
     return this.hasTriggerPrefix(input, this.TRIGGER_PREFIX);
@@ -46,15 +48,15 @@ export default class ExtensionHandler extends CommandHandler {
   }
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
-    const query = this.removeExtensionPrefix(input);
-    const page = this.parsePage(input);
-    const startCount = page * this.PAGE_SIZE;
+    let query = this.removeExtensionPrefix(input);
+    [this.curPage, query] = this.parsePage(query);
+    const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
     let suggestExtData: ExtensionData[] = fuzzysort
       .go(query, extensionData, { key: "name", all: true })
-      .map((x) => x.obj)
-      .slice(startCount, endCount);
-    const suggestions = suggestExtData.map(ExtensionHandler.extensionToSuggestResult);
+      .map((x) => x.obj);
+    this.totalPages = Math.ceil(suggestExtData.length / this.PAGE_SIZE);
+    const suggestions = suggestExtData.slice(startCount, endCount).map(ExtensionHandler.extensionToSuggestResult);
     return suggestions;
   }
 
@@ -62,11 +64,15 @@ export default class ExtensionHandler extends CommandHandler {
     const head = suggestions.shift();
     if (head) {
       cache.defaultContent = head.content;
-      chrome.omnibox.setDefaultSuggestion({ description: head.description });
+      chrome.omnibox.setDefaultSuggestion({
+        description: head.description + this.pageMessage(this.curPage, this.totalPages),
+      });
     } else {
       // If the suggestion list is empty, try to redirect to hoogle.
       const hoogle = HoogleHandler.buildHoogleSuggestResult(this.removeExtensionPrefix(cache.currentInput));
-      chrome.omnibox.setDefaultSuggestion({ description: hoogle.description });
+      chrome.omnibox.setDefaultSuggestion({
+        description: hoogle.description + this.pageMessage(this.curPage, this.totalPages),
+      });
       cache.defaultContent = cache.currentInput;
       suggestions = [hoogle];
     }

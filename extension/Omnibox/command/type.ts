@@ -41,20 +41,40 @@ export abstract class CommandHandler {
   public PAGE_SIZE: number = 10;
 
   /**
-   * 0 based page number
+   * Parse the page number from the input.
+   * The input should not contains any trigger prefix.
+   *
+   * @example parsePage("arr -") => [1, "arr"]
+   * @example parsePage("arr --") => [2, "arr"]
+   * @example parsePage("arr") => [0, "arr"]
+   * @example parsePage("arr-1") => [0, "arr-1"]
+   * @example parsePage("arr-") => [0, "arr-"]
    * @param input
-   * @returns
+   * @returns (page number, trimmed input without page number)
    */
-  parsePage(input: string): number {
+  parsePage(input: string): [number, string] {
     let cnt = 0;
-    for (const c of [...input].reverse()) {
-      if (c === "-") {
+    const rev = [...input].reverse();
+    const page_sep = "-";
+    for (const c of rev) {
+      if (c === page_sep) {
         cnt++;
+      } else if (c === " ") {
+        break;
       } else {
+        // If the current character is not a '-' or a space, it indicate that
+        // the '-' is the query part, not the page part.
+        // return 0;
+        cnt = 0;
         break;
       }
     }
-    return cnt;
+    return [cnt, rev.slice(cnt).reverse().join("").trim()];
+  }
+
+  pageMessage(curPage: number, totalPages: number): string {
+    const fixedPage = curPage >= totalPages ? totalPages : curPage + 1;
+    return ` | Page [${fixedPage}/${totalPages}], append '-' to page down`;
   }
 
   /**

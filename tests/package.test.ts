@@ -21,9 +21,8 @@ describe("package", () => {
 
   it("next page", () => {
     testSuggestion0(":pkg arr-", new PackageHandler(), {
-      content: "array-memoize",
-      description:
-        "[package] <match>arr</match>ay<match>-</match>memoize - Memoization combinators using arrays for finite sub-domains of functions",
+      content: "yarr-image-io",
+      description: "[package] y<match>arr-</match>image-io - Image IO for Yarr library",
     });
   });
 
