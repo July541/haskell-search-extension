@@ -23,6 +23,9 @@ export enum Command {
 }
 
 export abstract class CommandHandler {
+  curPage: number = 0;
+  totalPage: number = 0;
+
   /**
    * Generate suggestions by input.
    * @param input The search input by the user.
@@ -72,9 +75,9 @@ export abstract class CommandHandler {
     return [cnt, rev.slice(cnt).reverse().join("").trim()];
   }
 
-  pageMessage(curPage: number, totalPages: number): string {
-    const fixedPage = curPage >= totalPages ? totalPages : curPage + 1;
-    return ` | Page [${fixedPage}/${totalPages}], append '-' to page down`;
+  pageMessage(): string {
+    const fixedPage = this.curPage >= this.totalPage ? this.totalPage : this.curPage + 1;
+    return ` | Page [${fixedPage}/${this.totalPage}], append '-' to page down`;
   }
 
   /**
