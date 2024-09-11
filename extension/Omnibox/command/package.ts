@@ -2,6 +2,7 @@ import fuzzysort from "fuzzysort";
 import { HackageData, hackageData } from "../data/hackage/hackageData";
 import { CommandHandler, SearchCache } from "./type";
 import { Compat } from "../Compat";
+import HoogleHandler from "./hoogle";
 
 class PreparedHackageData {
   name: Fuzzysort.Prepared;
@@ -79,6 +80,12 @@ export default class PackageHandler extends CommandHandler {
       // if the user select the first suggestion while entering.
       cache.defaultContent = head.content;
       chrome.omnibox.setDefaultSuggestion({ description: head.description + this.pageMessage() });
+    } else {
+      // If the suggestion list is empty, try to redirect to hoogle.
+      const hoogle = HoogleHandler.buildHoogleSuggestResult(this.finalQuery);
+      chrome.omnibox.setDefaultSuggestion({ description: hoogle.description });
+      cache.defaultContent = cache.currentInput;
+      suggestions = [hoogle];
     }
   }
 
