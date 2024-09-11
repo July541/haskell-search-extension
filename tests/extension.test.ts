@@ -45,4 +45,11 @@ describe("extension", () => {
     const suggestions = handler.giveSuggestions(input);
     expect(suggestions.length).toBe(0);
   });
+
+  it("next page", () => {
+    testSuggestion0(":ext a -", new ExtensionHandler(), {
+      content: ":ext BinaryLiterals",
+      description: "{-# LANGUAGE BinaryLiterals #-} Since 7.10.1, default starting GHC2021",
+    });
+  });
 });
