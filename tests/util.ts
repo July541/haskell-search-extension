@@ -50,3 +50,8 @@ export function testHandleEnterWithSelection(
   const url = handler.handleEnter(selection, cache);
   expect(url).toBe(expected);
 }
+
+export function pagerEqual(handler: CommandHandler, input: string, page: number, query: string) {
+  handler.parsePageAndRemovePager(input);
+  expect([handler.curPage, handler.finalQuery]).toEqual([page, query]);
+}

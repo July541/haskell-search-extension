@@ -25,6 +25,7 @@ export enum Command {
 export abstract class CommandHandler {
   curPage: number = 0;
   totalPage: number = 0;
+  finalQuery: string = "";
 
   /**
    * Generate suggestions by input.
@@ -47,15 +48,16 @@ export abstract class CommandHandler {
    * Parse the page number from the input.
    * The input should not contains any trigger prefix.
    *
+   * **The function will also set the finalQuery field.**
+   *
    * @example parsePage("arr -") => [1, "arr"]
    * @example parsePage("arr --") => [2, "arr"]
    * @example parsePage("arr") => [0, "arr"]
    * @example parsePage("arr-1") => [0, "arr-1"]
    * @example parsePage("arr-") => [0, "arr-"]
    * @param input
-   * @returns (page number, trimmed input without page number)
    */
-  parsePage(input: string): [number, string] {
+  parsePageAndRemovePager(input: string) {
     let cnt = 0;
     const rev = [...input].reverse();
     const page_sep = "-";
@@ -72,7 +74,8 @@ export abstract class CommandHandler {
         break;
       }
     }
-    return [cnt, rev.slice(cnt).reverse().join("").trim()];
+    this.finalQuery = rev.slice(cnt).reverse().join("").trim();
+    this.curPage = cnt;
   }
 
   pageMessage(): string {

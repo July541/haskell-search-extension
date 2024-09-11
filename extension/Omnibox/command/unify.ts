@@ -18,29 +18,32 @@ export default class UnifyHandler extends CommandHandler {
   private searchTargets = hackageData.map((x) => new PreparedHackageData(x));
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
-    const [page, _] = this.parsePage(input);
-    const startCount = page * this.PAGE_SIZE;
+    this.parsePageAndRemovePager(input);
+    const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
 
     const suggestHackageData: HackageData[] = fuzzysort
-      .go(input, this.searchTargets, { key: "name" })
-      .map((x) => new HackageData(x.target, x.obj.description))
-      .slice(startCount, endCount);
+      .go(this.finalQuery, this.searchTargets, { key: "name" })
+      .map((x) => new HackageData(x.target, x.obj.description));
 
-    const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData.map((x: HackageData) => ({
-      content: x.name,
-      description:
-        x.description.length == 0
-          ? `[package] ${Compat.escape(x.name)}`
-          : `[package] ${Compat.escape(x.name)} - ${Compat.escape(x.description)}`,
-    }));
+    this.totalPage = Math.ceil(suggestHackageData.length / this.PAGE_SIZE);
+
+    const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData
+      .slice(startCount, endCount)
+      .map((x: HackageData) => ({
+        content: x.name,
+        description:
+          x.description.length == 0
+            ? `[package] ${Compat.escape(x.name)}`
+            : `[package] ${Compat.escape(x.name)} - ${Compat.escape(x.description)}`,
+      }));
 
     return suggestions;
   }
 
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
     const suggestions = this.giveSuggestions(input);
-    this.coreceWithHoogle(suggestions, input);
+    this.coreceWithHoogle(suggestions);
     this.adjustSuggestions(suggestions, cache);
     return suggestions;
   }
@@ -52,6 +55,7 @@ export default class UnifyHandler extends CommandHandler {
       // So we need to use the default content as the search target(like package name)
       input = cache.defaultContent;
     }
+    this.parsePageAndRemovePager(input);
 
     // If the suggestion list is not empty, that means the user select hoogle
     // by pressing up and down arrow keys, that promise the input must be a hoogle url.
@@ -63,11 +67,11 @@ export default class UnifyHandler extends CommandHandler {
     // Note that there has an assumption that modifying the content of the
     // `chrome.omnibox.SuggestionResult` won't affect the user's current input
     // in the omnibox.
-    if (HoogleHandler.isHoogleUrl(input)) {
+    if (HoogleHandler.isHoogleUrl(this.finalQuery)) {
       return input;
     }
 
-    const url = `https://hackage.haskell.org/package/${input}`;
+    const url = `https://hackage.haskell.org/package/${this.finalQuery}`;
     return url;
   }
 
@@ -76,9 +80,9 @@ export default class UnifyHandler extends CommandHandler {
    * @param suggestions Existed suggestions
    * @param input The user input
    */
-  coreceWithHoogle(suggestions: chrome.omnibox.SuggestResult[], input: string) {
+  coreceWithHoogle(suggestions: chrome.omnibox.SuggestResult[]) {
     const head = suggestions.shift();
-    suggestions.unshift(HoogleHandler.buildHoogleSuggestResult(input));
+    suggestions.unshift(HoogleHandler.buildHoogleSuggestResult(this.finalQuery));
 
     if (head) {
       suggestions.unshift(head);
@@ -96,7 +100,7 @@ export default class UnifyHandler extends CommandHandler {
       // Save the content of the first suggestion, so that we can recover it
       // if the user select the first suggestion while entering.
       cache.defaultContent = head.content;
-      chrome.omnibox.setDefaultSuggestion({ description: head.description });
+      chrome.omnibox.setDefaultSuggestion({ description: head.description + this.pageMessage() });
     }
   }
 }

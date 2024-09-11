@@ -34,10 +34,11 @@ export default class ExtensionHandler extends CommandHandler {
     }
 
     const query = this.removeExtensionPrefix(input);
+    this.parsePageAndRemovePager(query);
     return (
-      ExtensionHandler.EXT_MAP.get(query) ||
+      ExtensionHandler.EXT_MAP.get(this.finalQuery) ||
       // A fall through case, ideally this should not happen.
-      HoogleHandler.HOOGLE_BASE_URL + query
+      HoogleHandler.HOOGLE_BASE_URL + this.finalQuery
     );
   }
 
@@ -46,12 +47,12 @@ export default class ExtensionHandler extends CommandHandler {
   }
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
-    let query = this.removeExtensionPrefix(input);
-    [this.curPage, query] = this.parsePage(query);
+    const query = this.removeExtensionPrefix(input);
+    this.parsePageAndRemovePager(query);
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
     let suggestExtData: ExtensionData[] = fuzzysort
-      .go(query, extensionData, { key: "name", all: true })
+      .go(this.finalQuery, extensionData, { key: "name", all: true })
       .map((x) => x.obj);
     this.totalPage = Math.ceil(suggestExtData.length / this.PAGE_SIZE);
     const suggestions = suggestExtData.slice(startCount, endCount).map(ExtensionHandler.extensionToSuggestResult);
@@ -67,9 +68,9 @@ export default class ExtensionHandler extends CommandHandler {
       });
     } else {
       // If the suggestion list is empty, try to redirect to hoogle.
-      const hoogle = HoogleHandler.buildHoogleSuggestResult(this.removeExtensionPrefix(cache.currentInput));
+      const hoogle = HoogleHandler.buildHoogleSuggestResult(this.finalQuery);
       chrome.omnibox.setDefaultSuggestion({
-        description: hoogle.description + this.pageMessage(),
+        description: hoogle.description,
       });
       cache.defaultContent = cache.currentInput;
       suggestions = [hoogle];

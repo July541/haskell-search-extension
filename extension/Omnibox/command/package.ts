@@ -35,18 +35,19 @@ export default class PackageHandler extends CommandHandler {
       input = cache.defaultContent;
     }
     const query = this.removeExtensionPrefix(input);
-    const url = `https://hackage.haskell.org/package/${query}`;
+    this.parsePageAndRemovePager(query);
+    const url = `https://hackage.haskell.org/package/${this.finalQuery}`;
     return url;
   }
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
-    let query = this.removeExtensionPrefix(input);
-    [this.curPage, query] = this.parsePage(query);
+    const query = this.removeExtensionPrefix(input);
+    this.parsePageAndRemovePager(query);
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
 
     const suggestHackageData: HackageData[] = fuzzysort
-      .go(query, this.searchTargets, { key: "name", all: true })
+      .go(this.finalQuery, this.searchTargets, { key: "name", all: true })
       .map((x) => {
         const name = x.highlight("<match>", "</match>");
         const desp = Compat.escape(x.obj.description);

@@ -9,4 +9,10 @@ describe("package", () => {
       description: "[package] array - Mutable and immutable arrays",
     });
   });
+  it("next page", () => {
+    testSuggestion0("arr -", new UnifyHandler(), {
+      content: "ContArrow",
+      description: "[package] ContArrow - Control.Arrow.Transformer.Cont",
+    });
+  });
 });
