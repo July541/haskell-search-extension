@@ -19,10 +19,17 @@ describe("package", () => {
     });
   });
 
-  it("next page", () => {
+  it("fake next page", () => {
     testSuggestion0(":pkg arr-", new PackageHandler(), {
       content: "yarr-image-io",
       description: "[package] y<match>arr-</match>image-io - Image IO for Yarr library",
+    });
+  });
+
+  it("next page", () => {
+    testSuggestion0(":pkg arr -", new PackageHandler(), {
+      content: "ContArrow",
+      description: "[package] Cont<match>Arr</match>ow - Control.Arrow.Transformer.Cont",
     });
   });
 

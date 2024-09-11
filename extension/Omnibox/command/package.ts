@@ -40,9 +40,9 @@ export default class PackageHandler extends CommandHandler {
   }
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
-    const query = this.removeExtensionPrefix(input);
-    const [page, _] = this.parsePage(query);
-    const startCount = page * this.PAGE_SIZE;
+    let query = this.removeExtensionPrefix(input);
+    [this.curPage, query] = this.parsePage(query);
+    const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
 
     const suggestHackageData: HackageData[] = fuzzysort
@@ -52,13 +52,16 @@ export default class PackageHandler extends CommandHandler {
         const desp = Compat.escape(x.obj.description);
         const omniboxDescription = desp.length === 0 ? `[package] ${name}` : `[package] ${name} - ${desp}`;
         return new HackageData(x.obj.name.target, omniboxDescription);
-      })
-      .slice(startCount, endCount);
+      });
 
-    const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData.map((x: HackageData) => ({
-      content: x.name,
-      description: x.description,
-    }));
+    this.totalPage = Math.ceil(suggestHackageData.length / this.PAGE_SIZE);
+
+    const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData
+      .slice(startCount, endCount)
+      .map((x: HackageData) => ({
+        content: x.name,
+        description: x.description,
+      }));
 
     return suggestions;
   }
@@ -74,7 +77,7 @@ export default class PackageHandler extends CommandHandler {
       // Save the content of the first suggestion, so that we can recover it
       // if the user select the first suggestion while entering.
       cache.defaultContent = head.content;
-      chrome.omnibox.setDefaultSuggestion({ description: head.description });
+      chrome.omnibox.setDefaultSuggestion({ description: head.description + this.pageMessage() });
     }
   }
 
