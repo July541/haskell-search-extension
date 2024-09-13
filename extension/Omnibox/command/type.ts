@@ -20,6 +20,7 @@ export enum Command {
   SearchExtension,
   SearchDefault,
   SearchMeta,
+  SearchLink,
 }
 
 export abstract class CommandHandler {

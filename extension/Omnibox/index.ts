@@ -4,6 +4,7 @@ import HoogleHandler from "./command/hoogle";
 import ExtensionHandler from "./command/extension";
 import PackageHandler from "./command/package";
 import MetaHandler from "./command/meta";
+import LinkHandler from "./command/link";
 
 export class Omnibox {
   private cache: SearchCache = new SearchCache();
@@ -37,6 +38,8 @@ export class Omnibox {
         return Command.SearchExtension;
       } else if (PackageHandler.isPackageMode(input)) {
         return Command.SearchPackage;
+      } else if (LinkHandler.isLinkMode(input)) {
+        return Command.SearchLink;
       } else if (MetaHandler.isMetaMode(input)) {
         return Command.SearchMeta;
       }
@@ -52,6 +55,8 @@ export class Omnibox {
           return new ExtensionHandler();
         case Command.SearchDefault:
           return new UnifyHandler();
+        case Command.SearchLink:
+          return new LinkHandler();
         case Command.SearchMeta:
           return new MetaHandler();
       }
