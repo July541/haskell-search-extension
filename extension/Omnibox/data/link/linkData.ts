@@ -21,4 +21,10 @@ export const linkData: LinkData[] = [
   ["Cabal", "https://cabal.readthedocs.io/en/stable/", "Building and packaging Haskell libraries and programs"],
   ["Stack", "https://docs.haskellstack.org/en/stable/", "A program for developing Haskell projects"],
   ["Wiki", "https://wiki.haskell.org/", "Haskell Wiki"],
+  [
+    "Unfolder",
+    "https://www.youtube.com/watch?v=S_HSt6jEtWM&list=PLD8gywOEY4HaG5VSrKVnHxCptlJv2GAn7",
+    "The Haskell Unfolder Episode",
+  ],
+  ["Blog", "https://blog.haskell.org/", "The Haskell Programming Language's blog"],
 ].map((x) => new LinkData(x[0], x[1], x[2]));

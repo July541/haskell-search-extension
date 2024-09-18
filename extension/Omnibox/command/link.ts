@@ -17,7 +17,12 @@ export default class LinkHandler extends CommandHandler {
   }
 
   handleEnter(input: string, cache: SearchCache): string {
-    throw new Error("Method not implemented.");
+    if (input === cache.currentInput) {
+      input = cache.defaultContent;
+    }
+    const query = this.removeExtensionPrefix(input);
+    this.parsePageAndRemovePager(query);
+    return linkData.find((x) => x.name.toLowerCase() === this.finalQuery.toLowerCase())?.url || "";
   }
 
   removeExtensionPrefix(input: string): string {
