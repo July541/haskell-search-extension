@@ -11,8 +11,8 @@ describe("package", () => {
   });
   it("next page", () => {
     testSuggestion0("arr -", new UnifyHandler(), {
-      content: "ContArrow",
-      description: "[package] ContArrow - Control.Arrow.Transformer.Cont",
+      content: "bit-array",
+      description: "[package] bit-array - A bit array (aka bitset, bitmap, bit vector) API for numeric types",
     });
   });
 });

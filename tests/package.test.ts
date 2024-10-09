@@ -28,8 +28,9 @@ describe("package", () => {
 
   it("next page", () => {
     testSuggestion0(":pkg arr -", new PackageHandler(), {
-      content: "ContArrow",
-      description: "[package] Cont<match>Arr</match>ow - Control.Arrow.Transformer.Cont",
+      content: "bit-array",
+      description:
+        "[package] bit-<match>arr</match>ay - A bit array (aka bitset, bitmap, bit vector) API for numeric types",
     });
   });
 
