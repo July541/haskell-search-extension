@@ -1,5 +1,9 @@
 module Main where
-import Hackage.Generator (generateTSFileForHackage)
+
+import Generator.Error (generateTSFileForErrors)
+import Generator.Hackage (generateTSFileForHackage)
 
 main :: IO ()
-main = generateTSFileForHackage "../extension/Omnibox/hackageRawData.ts"
+main = do
+  generateTSFileForHackage "../extension/Omnibox/data/hackage/hackageRawData.ts"
+  generateTSFileForErrors "../extension/Omnibox/data/error/errorRawData.ts"

@@ -20,9 +20,14 @@ common warnings
 executable hse-data-generator
   import: warnings
   main-is: Main.hs
-  other-modules: Hackage.Generator
-  -- other-extensions:
+  other-modules:
+    Generator.Error
+    Generator.Extension
+    Generator.Flag
+    Generator.Hackage
+
   build-depends:
+    aeson,
     base,
     bytestring,
     conduit,

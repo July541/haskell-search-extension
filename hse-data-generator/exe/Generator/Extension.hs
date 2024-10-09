@@ -1,0 +1,1 @@
+module Generator.Extension where

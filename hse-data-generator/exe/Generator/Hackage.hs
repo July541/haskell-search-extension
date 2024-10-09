@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Hackage.Generator where
+module Generator.Hackage where
 
 import Conduit ((.|))
 import Conduit qualified as C
