@@ -16,6 +16,7 @@ import Data.Char
 import Data.Conduit.List qualified as C
 import Data.Conduit.Tar qualified as CT
 import Data.Conduit.Zlib
+import Data.Default.Class (def)
 import Data.List.Extra (replace)
 import Data.Map qualified as Map
 import Data.Text qualified as T
@@ -136,7 +137,7 @@ downloadHackageIndexImpl
   -> IO ()
 downloadHackageIndexImpl savePath = do
   request <- HC.parseRequest hackageTarUrl
-  manager <- HC.newManager $ HC.mkManagerSettings (TLSSettingsSimple True False False) Nothing
+  manager <- HC.newManager $ HC.mkManagerSettings (TLSSettingsSimple True False False def) Nothing
   C.runResourceT $ do
     response <- HC.http request manager
     C.runConduit $ HC.responseBody response C..| C.sinkFile savePath
