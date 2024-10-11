@@ -43,4 +43,20 @@ describe("meta", () => {
       description: "<match>:ext</match> - Search Haskell language extensions",
     });
   });
+
+  it(":url", () => {
+    const input = ":url";
+    testSuggestion0(input, new MetaHandler(), {
+      content: ":url",
+      description: "<match>:url</match> - Search useful links",
+    });
+  });
+
+  it(":err", () => {
+    const input = ":err";
+    testSuggestion0(input, new MetaHandler(), {
+      content: ":err",
+      description: "<match>:err</match> - Search Haskell errors",
+    });
+  });
 });

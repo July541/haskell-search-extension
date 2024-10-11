@@ -5,6 +5,7 @@ import ExtensionHandler from "./command/extension";
 import PackageHandler from "./command/package";
 import MetaHandler from "./command/meta";
 import LinkHandler from "./command/link";
+import ErrorHandler from "./command/error";
 
 export class Omnibox {
   private cache: SearchCache = new SearchCache();
@@ -40,7 +41,10 @@ export class Omnibox {
         return Command.SearchPackage;
       } else if (LinkHandler.isLinkMode(input)) {
         return Command.SearchLink;
+      } else if (ErrorHandler.isErrorMode(input)) {
+        return Command.SearchError;
       } else if (MetaHandler.isMetaMode(input)) {
+        // Don't forget to make meta mode check at last
         return Command.SearchMeta;
       }
       return Command.SearchDefault;
@@ -57,6 +61,8 @@ export class Omnibox {
           return new UnifyHandler();
         case Command.SearchLink:
           return new LinkHandler();
+        case Command.SearchError:
+          return new ErrorHandler();
         case Command.SearchMeta:
           return new MetaHandler();
       }

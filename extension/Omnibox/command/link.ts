@@ -34,7 +34,7 @@ export default class LinkHandler extends CommandHandler {
     this.parsePageAndRemovePager(query);
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
-    let suggestLinkData: LinkData[] = fuzzysort
+    const suggestLinkData: LinkData[] = fuzzysort
       .go(this.finalQuery, linkData, { key: "name", all: true })
       .map((x) => x.obj);
     this.totalPage = Math.ceil(suggestLinkData.length / this.PAGE_SIZE);

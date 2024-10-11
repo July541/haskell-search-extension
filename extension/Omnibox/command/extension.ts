@@ -51,7 +51,7 @@ export default class ExtensionHandler extends CommandHandler {
     this.parsePageAndRemovePager(query);
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
-    let suggestExtData: ExtensionData[] = fuzzysort
+    const suggestExtData: ExtensionData[] = fuzzysort
       .go(this.finalQuery, extensionData, { key: "name", all: true })
       .map((x) => x.obj);
     this.totalPage = Math.ceil(suggestExtData.length / this.PAGE_SIZE);

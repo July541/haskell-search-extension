@@ -21,6 +21,7 @@ export enum Command {
   SearchDefault,
   SearchMeta,
   SearchLink,
+  SearchError,
 }
 
 export abstract class CommandHandler {

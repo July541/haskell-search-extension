@@ -5,6 +5,7 @@ import PackageHandler from "./package";
 import { CommandHandler, SearchCache } from "./type";
 import { Compat } from "../Compat";
 import LinkHandler from "./link";
+import ErrorHandler from "./error";
 
 export default class MetaHandler extends CommandHandler {
   private static TRIGGER_PREFIX: string = ":";
@@ -14,6 +15,7 @@ export default class MetaHandler extends CommandHandler {
     ExtensionHandler.TRIGGER_PREFIX,
     HoogleHandler.TRIGGER_PREFIX,
     LinkHandler.TRIGGER_PREFIX,
+    ErrorHandler.TRIGGER_PREFIX,
   ];
 
   public static isMetaMode(input: string): boolean {
@@ -48,7 +50,9 @@ export default class MetaHandler extends CommandHandler {
     } else if (key === HoogleHandler.TRIGGER_PREFIX) {
       return "Search on hoogle";
     } else if (key === LinkHandler.TRIGGER_PREFIX) {
-      return "Search for useful links";
+      return "Search useful links";
+    } else if (key === ErrorHandler.TRIGGER_PREFIX) {
+      return "Search Haskell errors";
     }
     return "Unexpected command: " + key;
   }
