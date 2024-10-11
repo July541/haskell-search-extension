@@ -16,7 +16,15 @@ export default class ErrorHandler extends CommandHandler {
   }
 
   handleEnter(input: string, cache: SearchCache): string {
-    throw new Error("Method not implemented.");
+    if (input === cache.currentInput) {
+      input = cache.defaultContent;
+    }
+
+    const query = this.removeErrorPrefix(input);
+    this.parsePageAndRemovePager(query);
+
+    const err = errorData.find((x) => x.code === this.finalQuery);
+    return `https://errors.haskell.org/${err ? err.route : ""}`;
   }
 
   removeErrorPrefix(input: string): string {
