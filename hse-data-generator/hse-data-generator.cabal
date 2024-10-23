@@ -38,11 +38,14 @@ executable hse-data-generator
     directory,
     extra,
     filepath,
+    html-conduit,
     http-conduit,
+    syb,
     tar-conduit,
     text,
     unicode-show,
     utf8-string,
+    xml-conduit,
 
   hs-source-dirs: exe
   default-language: GHC2021
