@@ -41,7 +41,7 @@ export default class ExtensionHandler extends CommandHandler {
     this.parsePageAndRemovePager(query);
     return (
       ExtensionHandler.EXT_BASE_URL + ExtensionHandler.EXT_MAP.get(this.finalQuery) ||
-      // A fall through case, ideally this should not happen.
+      // A fall through case, ideally this should never happen.
       HoogleHandler.HOOGLE_BASE_URL + this.finalQuery
     );
   }
