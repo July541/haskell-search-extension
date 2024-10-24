@@ -20,23 +20,23 @@ describe("extension", () => {
   });
 
   it("deprecated extension", () => {
-    testSuggestion0(":ext cu", new ExtensionHandler(), {
-      content: ":ext CUSKs",
-      description: "[deprecated] {-# LANGUAGE CUSKs #-} Since 8.10.1",
+    testSuggestion0(":ext incoher", new ExtensionHandler(), {
+      content: ":ext IncoherentInstances",
+      description: "[deprecated] {-# LANGUAGE IncoherentInstances #-} Since 6.8.1",
     });
   });
 
   it("default starting GHC2021", () => {
     testSuggestion0(":ext BangPatterns", new ExtensionHandler(), {
       content: ":ext BangPatterns",
-      description: "{-# LANGUAGE BangPatterns #-} Since 6.8.1, default starting GHC2021",
+      description: "{-# LANGUAGE BangPatterns #-} Since 6.8.1 Included in GHC2024,GHC2021",
     });
   });
   it("suggestion number", () => {
     const input = ":ext ex";
     const handler = new ExtensionHandler();
     const suggestions = handler.giveSuggestions(input);
-    expect(suggestions.length).toBe(4);
+    expect(suggestions.length).toBe(10);
   });
 
   it("no suggestion", () => {
@@ -48,8 +48,8 @@ describe("extension", () => {
 
   it("next page", () => {
     testSuggestion0(":ext a -", new ExtensionHandler(), {
-      content: ":ext BinaryLiterals",
-      description: "{-# LANGUAGE BinaryLiterals #-} Since 7.10.1, default starting GHC2021",
+      content: ":ext Safe",
+      description: "{-# LANGUAGE Safe #-} Since 7.2.1",
     });
   });
 });
