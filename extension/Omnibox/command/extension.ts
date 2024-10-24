@@ -1,5 +1,5 @@
 import fuzzysort from "fuzzysort";
-import { ExtensionData, extensionData, IncludedVersion } from "../data/extension/extensionData";
+import { ExtensionData, extensionData } from "../data/extension/extensionData";
 import { CommandHandler, SearchCache } from "./type";
 import HoogleHandler from "./hoogle";
 
