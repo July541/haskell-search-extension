@@ -30,6 +30,35 @@ export default class ExtensionHandler extends CommandHandler {
     };
   }
 
+  /**
+   * Some extensions like `GHC2024` enabled some other extensions by default(`DataKinds` for example),
+   * so we'd like to apply these enabled extensions if the user types like `GHC2024`.
+   * @param suggestions
+   * @returns
+   */
+  expandSuggestionForIncluded(suggestions: ExtensionData[]) {
+    if (suggestions.length === 0) {
+      return;
+    }
+
+    const head = suggestions[0];
+    const isValidIncludedVersion = Object.values(IncludedVersion)
+      .map((x) => x.toString())
+      .includes(head.name);
+
+    if (!isValidIncludedVersion || head.name === "NA") {
+      return;
+    }
+
+    const includedExtensions = extensionData.filter((x) => x.included.includes(head.name as IncludedVersion));
+    const suggestionNames = suggestions.map((x) => x.name);
+    includedExtensions.forEach((x) => {
+      if (!suggestionNames.includes(x.name)) {
+        suggestions.push(x);
+      }
+    });
+  }
+
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
     const suggestions = this.giveSuggestions(input);
     this.adjustSuggestions(suggestions, cache);
@@ -62,6 +91,7 @@ export default class ExtensionHandler extends CommandHandler {
     const suggestExtData: ExtensionData[] = fuzzysort
       .go(this.finalQuery, extensionData, { key: "name", all: true })
       .map((x) => x.obj);
+    this.expandSuggestionForIncluded(suggestExtData);
     this.totalPage = Math.ceil(suggestExtData.length / this.PAGE_SIZE);
     const suggestions = suggestExtData.slice(startCount, endCount).map(ExtensionHandler.extensionToSuggestResult);
     return suggestions;

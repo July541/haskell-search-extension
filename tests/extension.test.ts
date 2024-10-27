@@ -1,5 +1,5 @@
 import ExtensionHandler from "../extension/omnibox/command/extension";
-import { testSuggestion0 } from "./util";
+import { testSuggestion, testSuggestion0 } from "./util";
 
 describe("extension", () => {
   it(":ext", () => {
@@ -67,5 +67,61 @@ describe("extension", () => {
 
   it("GHC2024 included count", () => {
     expect(ExtensionHandler.GHC2024_Included.length).toBe(49);
+  });
+
+  it("expandSuggestionForIncluded Haskell98", () => {
+    testSuggestion(":ext Haskell98", new ExtensionHandler(), 2, {
+      content: ":ext DatatypeContexts",
+      description: "[deprecated] {-# LANGUAGE DatatypeContexts #-} Since 7.0.1 Included in Haskell98,Haskell2010",
+    });
+  });
+
+  it("expandSuggestionForIncluded Haskell2010", () => {
+    testSuggestion(":ext Haskell2010", new ExtensionHandler(), 3, {
+      content: ":ext EmptyDataDecls",
+      description: "{-# LANGUAGE EmptyDataDecls #-} Since 6.8.1 Included in GHC2024,GHC2021,Haskell2010",
+    });
+  });
+
+  it("expandSuggestionForIncluded GHC2021", () => {
+    testSuggestion(":ext GHC2021", new ExtensionHandler(), 3, {
+      content: ":ext ConstrainedClassMethods",
+      description: "{-# LANGUAGE ConstrainedClassMethods #-} Since 6.8.1 Included in GHC2024,GHC2021",
+    });
+  });
+
+  it("expandSuggestionForIncluded GHC2021 next page", () => {
+    testSuggestion0(":ext GHC2021 -", new ExtensionHandler(), {
+      content: ":ext DeriveTraversable",
+      description: "{-# LANGUAGE DeriveTraversable #-} Since 7.10.1 Included in GHC2024,GHC2021",
+    });
+  });
+
+  it("expandSuggestionForIncluded GHC2021 next two page", () => {
+    testSuggestion0(":ext GHC2021 --", new ExtensionHandler(), {
+      content: ":ext GADTSyntax",
+      description: "{-# LANGUAGE GADTSyntax #-} Since 7.2.1 Included in GHC2024,GHC2021",
+    });
+  });
+
+  it("expandSuggestionForIncluded GHC2024", () => {
+    testSuggestion(":ext GHC2024", new ExtensionHandler(), 2, {
+      content: ":ext BinaryLiterals",
+      description: "{-# LANGUAGE BinaryLiterals #-} Since 7.10.1 Included in GHC2024,GHC2021",
+    });
+  });
+
+  it("expandSuggestionForIncluded GHC2024 next page", () => {
+    testSuggestion0(":ext GHC2024 -", new ExtensionHandler(), {
+      content: ":ext DeriveLift",
+      description: "{-# LANGUAGE DeriveLift #-} Since 8.0.1 Included in GHC2024,GHC2021",
+    });
+  });
+
+  it("expandSuggestionForIncluded GHC2024 next two page", () => {
+    testSuggestion0(":ext GHC2024 --", new ExtensionHandler(), {
+      content: ":ext FieldSelectors",
+      description: "{-# LANGUAGE FieldSelectors #-} Since 9.2.1 Included in GHC2024,GHC2021,Haskell2010,Haskell98",
+    });
   });
 });
