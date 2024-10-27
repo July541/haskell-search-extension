@@ -1,2 +1,4 @@
 extension/omnibox/data/hackage/hackageRawData.ts
 extension/omnibox/data/error/errorRawData.ts
+extension/omnibox/data/link/linkRawData.ts
+extension/omnibox/data/extension/extensionRawData.ts

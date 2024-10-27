@@ -25,6 +25,7 @@ executable hse-data-generator
     Generator.Extension
     Generator.Flag
     Generator.Hackage
+    Generator.Link
 
   build-depends:
     aeson,
