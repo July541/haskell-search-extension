@@ -52,4 +52,20 @@ describe("extension", () => {
       description: "{-# LANGUAGE Safe #-} Since 7.2.1",
     });
   });
+
+  it("Haskell98 included count", () => {
+    expect(ExtensionHandler.Haskell98_Included.length).toBe(7);
+  });
+
+  it("Haskell2010 included count", () => {
+    expect(ExtensionHandler.Haskell2010_Included.length).toBe(9);
+  });
+
+  it("GHC2021 included count", () => {
+    expect(ExtensionHandler.GHC2021_Included.length).toBe(41);
+  });
+
+  it("GHC2024 included count", () => {
+    expect(ExtensionHandler.GHC2024_Included.length).toBe(49);
+  });
 });

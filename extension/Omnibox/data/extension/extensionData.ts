@@ -31,7 +31,7 @@ export const extensionData: ExtensionData[] = extensionRawData.map((raw) => {
     raw[0],
     raw[1] == "NA" ? undefined : raw[1],
     raw[2] == "Deprecated",
-    raw[3].split(", ").map((o) => o as IncludedVersion),
+    raw[3].split(",").map((o) => o as IncludedVersion),
     raw[4]
   );
 });

@@ -1,5 +1,5 @@
 import fuzzysort from "fuzzysort";
-import { ExtensionData, extensionData } from "../data/extension/extensionData";
+import { ExtensionData, extensionData, IncludedVersion } from "../data/extension/extensionData";
 import { CommandHandler, SearchCache } from "./type";
 import HoogleHandler from "./hoogle";
 
@@ -7,6 +7,10 @@ export default class ExtensionHandler extends CommandHandler {
   public static TRIGGER_PREFIX: string = ":ext";
   private static EXT_MAP: Map<string, string> = new Map(extensionData.map((x) => [x.name, x.url]));
   private static EXT_BASE_URL: string = "https://ghc.gitlab.haskell.org/ghc/doc/users_guide/";
+  static Haskell98_Included = extensionData.filter((x) => x.included.includes(IncludedVersion.Haskell98));
+  static Haskell2010_Included = extensionData.filter((x) => x.included.includes(IncludedVersion.Haskell2010));
+  static GHC2021_Included = extensionData.filter((x) => x.included.includes(IncludedVersion.GHC2021));
+  static GHC2024_Included = extensionData.filter((x) => x.included.includes(IncludedVersion.GHC2024));
 
   public static isExtensionMode(input: string): boolean {
     return this.hasTriggerPrefix(input, this.TRIGGER_PREFIX);
