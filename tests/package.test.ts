@@ -15,22 +15,21 @@ describe("package", () => {
   it("Package search with :pkg", () => {
     testSuggestion0(":pkg arr", new PackageHandler(), {
       content: "array",
-      description: "[package] <match>arr</match>ay - Mutable and immutable arrays",
+      description: "<match>arr</match>ay - Mutable and immutable arrays",
     });
   });
 
   it("fake next page", () => {
     testSuggestion0(":pkg arr-", new PackageHandler(), {
       content: "yarr-image-io",
-      description: "[package] y<match>arr-</match>image-io - Image IO for Yarr library",
+      description: "y<match>arr-</match>image-io - Image IO for Yarr library",
     });
   });
 
   it("next page", () => {
     testSuggestion0(":pkg arr -", new PackageHandler(), {
       content: "bit-array",
-      description:
-        "[package] bit-<match>arr</match>ay - A bit array (aka bitset, bitmap, bit vector) API for numeric types",
+      description: "bit-<match>arr</match>ay - A bit array (aka bitset, bitmap, bit vector) API for numeric types",
     });
   });
 

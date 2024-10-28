@@ -22,6 +22,13 @@ export default class PackageHandler extends CommandHandler {
     return this.hasTriggerPrefix(input, PackageHandler.TRIGGER_PREFIX);
   }
 
+  static packageToSuggestResult(data: HackageData): chrome.omnibox.SuggestResult {
+    return {
+      content: data.name,
+      description: data.description,
+    };
+  }
+
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
     const suggestions = this.giveSuggestions(input);
     this.adjustSuggestions(suggestions, cache);
@@ -41,29 +48,28 @@ export default class PackageHandler extends CommandHandler {
     return url;
   }
 
+  static searchResultToHackageData(highlightName: string, data: HackageData): HackageData {
+    const desp = Compat.escape(data.description);
+    const omniboxDescription = desp.length === 0 ? `${highlightName}` : `${highlightName} - ${desp}`;
+    return new HackageData(data.name, omniboxDescription);
+  }
+
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
     const query = this.removeExtensionPrefix(input);
     this.parsePageAndRemovePager(query);
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
-
-    const suggestHackageData: HackageData[] = fuzzysort
-      .go(this.finalQuery, this.searchTargets, { key: "name", all: true })
-      .map((x) => {
-        const name = x.highlight("<match>", "</match>");
-        const desp = Compat.escape(x.obj.description);
-        const omniboxDescription = desp.length === 0 ? `[package] ${name}` : `[package] ${name} - ${desp}`;
-        return new HackageData(x.obj.name.target, omniboxDescription);
-      });
-
+    const suggestHackageData = fuzzysort.go(this.finalQuery, this.searchTargets, { key: "name", all: true });
     this.totalPage = Math.ceil(suggestHackageData.length / this.PAGE_SIZE);
 
     const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData
       .slice(startCount, endCount)
-      .map((x: HackageData) => ({
-        content: x.name,
-        description: x.description,
-      }));
+      // TODO: move these two map to `searchResultToHackageData`
+      .map((x) => {
+        const name = x.highlight("<match>", "</match>");
+        return PackageHandler.searchResultToHackageData(name, new HackageData(x.obj.name.target, x.obj.description));
+      })
+      .map(PackageHandler.packageToSuggestResult);
 
     return suggestions;
   }

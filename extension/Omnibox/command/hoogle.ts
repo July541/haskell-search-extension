@@ -44,7 +44,6 @@ export default class HoogleHandler extends CommandHandler {
 
   giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
     const query = this.removeHooglePrefix(input);
-    console.log(query);
     if (query.length === 0) {
       return [{ content: HoogleHandler.HOOGLE_URL, description: HoogleHandler.HOOGLE_DEFAULT_DESCRIPTION }];
     }
