@@ -34,11 +34,12 @@ export default class LinkHandler extends CommandHandler {
     this.parsePageAndRemovePager(query);
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
-    const suggestLinkData: LinkData[] = fuzzysort
-      .go(this.finalQuery, linkData, { key: "name", all: true })
-      .map((x) => x.obj);
+    const suggestLinkData = fuzzysort.go(this.finalQuery, linkData, { key: "name", all: true });
     this.totalPage = Math.ceil(suggestLinkData.length / this.PAGE_SIZE);
-    const suggestions = suggestLinkData.slice(startCount, endCount).map(LinkHandler.linkToSuggestResult);
+    const suggestions = suggestLinkData
+      .slice(startCount, endCount)
+      .map((x) => x.obj)
+      .map(LinkHandler.linkToSuggestResult);
     return suggestions;
   }
 

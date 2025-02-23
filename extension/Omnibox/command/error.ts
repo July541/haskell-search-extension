@@ -36,11 +36,15 @@ export default class ErrorHandler extends CommandHandler {
     this.parsePageAndRemovePager(query);
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
-    const suggestErrData: ErrorData[] = fuzzysort
-      .go(this.finalQuery, errorData, { keys: ["title", "code", "introduced"], all: true })
-      .map((x) => x.obj);
+    const suggestErrData = fuzzysort.go(this.finalQuery, errorData, {
+      keys: ["title", "code", "introduced"],
+      all: true,
+    });
     this.totalPage = Math.ceil(suggestErrData.length / this.PAGE_SIZE);
-    const suggestions = suggestErrData.slice(startCount, endCount).map(this.errorToSuggestResult);
+    const suggestions = suggestErrData
+      .slice(startCount, endCount)
+      .map((x) => x.obj)
+      .map(this.errorToSuggestResult);
     return suggestions;
   }
 

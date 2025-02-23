@@ -1,106 +1,156 @@
 import fuzzysort from "fuzzysort";
-import { CommandHandler, SearchCache } from "./type";
+import { Command, CommandHandler, SearchCache } from "./type";
 import { HackageData, hackageData } from "../data/hackage/hackageData";
 import { Compat } from "../Compat";
 import HoogleHandler from "./hoogle";
+import PackageHandler from "./package";
+import ExtensionHandler from "./extension";
+import LinkHandler from "./link";
+import ErrorHandler from "./error";
+import { extensionData, ExtensionData } from "../data/extension/extensionData";
+import { linkData, LinkData } from "../data/link/linkData";
+import { errorData, ErrorData } from "../data/error/errorData";
 
-class PreparedHackageData {
+type SubData = HackageData | ExtensionData | LinkData | ErrorData;
+
+enum SearchKey {
+  SearchByName,
+  SearchByTitle,
+  SearchByCode,
+  SearchByIntroduced,
+}
+
+class UnifyData {
   name: Fuzzysort.Prepared;
-  description: string;
+  value: SubData;
+  searchKey: SearchKey;
 
-  constructor(data: HackageData) {
-    this.name = fuzzysort.prepare(data.name);
-    this.description = data.description;
+  constructor(name: string, data: SubData, searchKey: SearchKey = SearchKey.SearchByName) {
+    this.name = fuzzysort.prepare(name);
+    this.value = data;
+    this.searchKey = searchKey;
   }
 }
 
 export default class UnifyHandler extends CommandHandler {
-  private searchTargets = hackageData.map((x) => new PreparedHackageData(x));
-
-  giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
-    this.parsePageAndRemovePager(input);
-    const startCount = this.curPage * this.PAGE_SIZE;
-    const endCount = startCount + this.PAGE_SIZE;
-
-    const suggestHackageData: HackageData[] = fuzzysort
-      .go(this.finalQuery, this.searchTargets, { key: "name" })
-      .map((x) => new HackageData(x.target, x.obj.description));
-
-    this.totalPage = Math.ceil(suggestHackageData.length / this.PAGE_SIZE);
-
-    const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData
-      .slice(startCount, endCount)
-      .map((x: HackageData) => ({
-        content: x.name,
-        description:
-          x.description.length == 0
-            ? `[package] ${Compat.escape(x.name)}`
-            : `[package] ${Compat.escape(x.name)} - ${Compat.escape(x.description)}`,
-      }));
-
-    return suggestions;
-  }
+  private searchTargets = ([] as UnifyData[]).concat(
+    hackageData.map((x) => new UnifyData(x.name, x)),
+    extensionData.map((x) => new UnifyData(x.name, x)),
+    linkData.map((x) => new UnifyData(x.name, x)),
+    errorData.map((x) => new UnifyData(x.title, x, SearchKey.SearchByTitle)), // We have 3 keys for error search
+    errorData.map((x) => new UnifyData(x.code, x, SearchKey.SearchByCode)),
+    errorData.map((x) => new UnifyData(x.introduced, x, SearchKey.SearchByIntroduced))
+  );
 
   handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
     const suggestions = this.giveSuggestions(input);
-    this.coreceWithHoogle(suggestions);
     this.adjustSuggestions(suggestions, cache);
     return suggestions;
   }
 
   handleEnter(input: string, cache: SearchCache): string {
+    console.log(input);
+    console.log(cache);
     if (input === cache.currentInput) {
-      // If the input is the same as the this.currentInput,
-      // that means the user wants to use the first search result.
-      // So we need to use the default content as the search target(like package name)
       input = cache.defaultContent;
     }
+
+    return "";
+
+    const query = this.parsePageAndRemovePager(input);
+  }
+
+  private fromHackageData(highlightName: string, data: HackageData): chrome.omnibox.SuggestResult {
+    const desp = Compat.escape(data.description);
+    const omniboxDescription = "[package] " + (desp.length === 0 ? `${highlightName}` : `${highlightName} - ${desp}`);
+    return {
+      content: data.name,
+      description: omniboxDescription,
+    };
+  }
+
+  private fromExtensionData(highlightName: string, data: ExtensionData): chrome.omnibox.SuggestResult {
+    const extStr = "[extension] ";
+    const deprecatedStr = data.deprecated ? "[deprecated] " : "";
+    const nameStr = `{-# LANGUAGE ${highlightName} #-} `;
+    const sinceStr = data.since ? `Since ${data.since}` : "";
+    const includedStr =
+      data.included.length === 0 || data.included[0] === "NA" ? "" : `Included in ${data.included.join(",")}`;
+    return {
+      content: ExtensionHandler.TRIGGER_PREFIX + " " + data.name, // Add <:ext > prefix to make sure that the `handleChange` works.
+      description: `${extStr}${deprecatedStr}${nameStr}${sinceStr}${includedStr.length === 0 ? "" : " "}${includedStr}`,
+    };
+  }
+
+  private fromLinkData(highlightName: string, data: LinkData): chrome.omnibox.SuggestResult {
+    return {
+      content: LinkHandler.TRIGGER_PREFIX + " " + data.name, // Add <:url > prefix to make sure that the `handleChange` works.
+      description: "[link] " + highlightName + " " + data.description,
+    };
+  }
+
+  private fromErrorData(highlight: string, data: ErrorData, searchKey: SearchKey): chrome.omnibox.SuggestResult {
+    switch (searchKey) {
+      case SearchKey.SearchByTitle:
+        const title = highlight;
+        return {
+          content: ErrorHandler.TRIGGER_PREFIX + " " + data.code,
+          description: `[error] [${data.code}] ${title} (Introduced in ${data.introduced})`,
+        };
+      case SearchKey.SearchByCode:
+        const code = highlight;
+        return {
+          content: ErrorHandler.TRIGGER_PREFIX + " " + data.code,
+          description: `[error] [${code}] ${data.title} (Introduced in ${data.introduced})`,
+        };
+      case SearchKey.SearchByIntroduced:
+        const introduced = highlight;
+        return {
+          content: ErrorHandler.TRIGGER_PREFIX + " " + data.code,
+          description: `[error] [${data.code}] ${data.title} (Introduced in ${introduced})`,
+        };
+      default:
+        throw new Error("Invalid search key");
+    }
+  }
+
+  unifyToSuggestResult(highlightName: string, data: UnifyData): chrome.omnibox.SuggestResult {
+    if (data.value instanceof HackageData) {
+      return this.fromHackageData(highlightName, data.value as HackageData);
+    } else if (data.value instanceof ExtensionData) {
+      return this.fromExtensionData(highlightName, data.value as ExtensionData);
+    } else if (data.value instanceof LinkData) {
+      return this.fromLinkData(highlightName, data.value as LinkData);
+    } else if (data.value instanceof ErrorData) {
+      return this.fromErrorData(highlightName, data.value, data.searchKey);
+    } else {
+      throw new Error("Invalid data type");
+    }
+  }
+
+  giveSuggestions(input: string): chrome.omnibox.SuggestResult[] {
     this.parsePageAndRemovePager(input);
-
-    // If the suggestion list is not empty, that means the user select hoogle
-    // by pressing up and down arrow keys, that promise the input must be a hoogle url.
-    // If the suggestion list is empty, function `adjustSuggestions` will save the
-    // hoogle url to cache.defaultContent, since there is no other suggestion,
-    // the input must equal to cache.currentInput, that will make the input be
-    // assigned to cache.defaultContent, in which case the input will be a hoogle url.
-    //
-    // Note that there has an assumption that modifying the content of the
-    // `chrome.omnibox.SuggestionResult` won't affect the user's current input
-    // in the omnibox.
-    if (HoogleHandler.isHoogleUrl(this.finalQuery)) {
-      return input;
-    }
-
-    const url = `https://hackage.haskell.org/package/${this.finalQuery}`;
-    return url;
+    const startCount = this.curPage * this.PAGE_SIZE;
+    const endCount = startCount + this.PAGE_SIZE;
+    const suggestData = fuzzysort.go(this.finalQuery, this.searchTargets, { key: "name", all: true });
+    this.totalPage = Math.ceil(suggestData.length / this.PAGE_SIZE);
+    const suggestions = suggestData.slice(startCount, endCount).map((x) => {
+      const name = x.highlight("<match>", "</match>");
+      return this.unifyToSuggestResult(name, x.obj);
+    });
+    return suggestions;
   }
 
-  /**
-   * Coerce the suggestions with hoogle search.
-   * @param suggestions Existed suggestions
-   * @param input The user input
-   */
-  coreceWithHoogle(suggestions: chrome.omnibox.SuggestResult[]) {
-    const head = suggestions.shift();
-    suggestions.unshift(HoogleHandler.buildHoogleSuggestResult(this.finalQuery));
-
-    if (head) {
-      suggestions.unshift(head);
-    }
-  }
-
-  /**
-   * Cache the content of the first suggestion and set it as the chrome's default suggestion.
-   * Otherwise there will left the user input in the first line of the suggestion result.
-   * @param suggestions
-   */
   adjustSuggestions(suggestions: chrome.omnibox.SuggestResult[], cache: SearchCache) {
     const head = suggestions.shift();
     if (head) {
-      // Save the content of the first suggestion, so that we can recover it
-      // if the user select the first suggestion while entering.
       cache.defaultContent = head.content;
       chrome.omnibox.setDefaultSuggestion({ description: head.description + this.pageMessage() });
+    } else {
+      const hoogle = HoogleHandler.buildHoogleSuggestResult(this.finalQuery);
+      chrome.omnibox.setDefaultSuggestion({ description: hoogle.description });
+      cache.defaultContent = cache.currentInput;
+      suggestions = [hoogle];
     }
   }
 }

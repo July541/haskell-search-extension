@@ -36,6 +36,8 @@ export default class PackageHandler extends CommandHandler {
   }
 
   handleEnter(input: string, cache: SearchCache): string {
+    console.log(input);
+    console.log(cache);
     if (input === cache.currentInput) {
       // If the input is the same as the this.currentInput,
       // that means the user wants to use the first search result.
@@ -64,7 +66,6 @@ export default class PackageHandler extends CommandHandler {
 
     const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData
       .slice(startCount, endCount)
-      // TODO: move these two map to `searchResultToHackageData`
       .map((x) => {
         const name = x.highlight("<match>", "</match>");
         return PackageHandler.searchResultToHackageData(name, new HackageData(x.obj.name.target, x.obj.description));
