@@ -1,11 +1,11 @@
 import { Command, CommandHandler, SearchCache } from "./command/type";
-import UnifyHandler from "./command/unify";
 import HoogleHandler from "./command/hoogle";
 import ExtensionHandler from "./command/extension";
 import PackageHandler from "./command/package";
 import MetaHandler from "./command/meta";
 import LinkHandler from "./command/link";
 import ErrorHandler from "./command/error";
+import DefaultHandler from "./command/default";
 
 export class Omnibox {
   private cache: SearchCache = new SearchCache();
@@ -21,6 +21,10 @@ export class Omnibox {
     });
 
     chrome.omnibox.onInputEntered.addListener((input: string) => {
+      if (input === this.cache.currentInput) {
+        input = this.cache.defaultContent;
+      }
+
       const handler = this.inferHandler(input);
       if (handler instanceof MetaHandler) {
         return;
@@ -58,7 +62,7 @@ export class Omnibox {
         case Command.SearchExtension:
           return new ExtensionHandler();
         case Command.SearchDefault:
-          return new UnifyHandler();
+          return new DefaultHandler();
         case Command.SearchLink:
           return new LinkHandler();
         case Command.SearchError:

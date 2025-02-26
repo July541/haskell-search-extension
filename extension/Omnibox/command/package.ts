@@ -36,8 +36,6 @@ export default class PackageHandler extends CommandHandler {
   }
 
   handleEnter(input: string, cache: SearchCache): string {
-    console.log(input);
-    console.log(cache);
     if (input === cache.currentInput) {
       // If the input is the same as the this.currentInput,
       // that means the user wants to use the first search result.
