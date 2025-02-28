@@ -40,7 +40,9 @@ export class Omnibox {
 
   inferHandler(input: string): CommandHandler {
     const inferCommand = (input: string): Command => {
-      if (HoogleHandler.isHoogleMode(input)) {
+      if (input.length === 0) {
+        return Command.SearchMeta;
+      } else if (HoogleHandler.isHoogleMode(input)) {
         return Command.SearchHoogle;
       } else if (ExtensionHandler.isExtensionMode(input)) {
         return Command.SearchExtension;
