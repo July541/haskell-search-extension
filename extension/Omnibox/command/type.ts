@@ -28,6 +28,7 @@ export abstract class CommandHandler {
   curPage: number = 0;
   totalPage: number = 0;
   finalQuery: string = "";
+  count: number = 0;
 
   /**
    * Generate suggestions by input.
@@ -80,9 +81,14 @@ export abstract class CommandHandler {
     this.curPage = cnt;
   }
 
+  buildPageInfo(count: number) {
+    this.count = count;
+    this.totalPage = Math.ceil(count / this.PAGE_SIZE);
+  }
+
   pageMessage(): string {
     const fixedPage = this.curPage >= this.totalPage ? this.totalPage : this.curPage + 1;
-    return ` | Page [${fixedPage}/${this.totalPage}], append '-' to page down`;
+    return ` | Page [${fixedPage}/${this.totalPage}], total ${this.count}, append '-' to page down`;
   }
 
   /**

@@ -88,7 +88,7 @@ export default class ExtensionHandler extends CommandHandler {
       .go(this.finalQuery, extensionData, { key: "name", all: true })
       .map((x) => x.obj);
     this.expandSuggestionForIncluded(suggestExtData);
-    this.totalPage = Math.ceil(suggestExtData.length / this.PAGE_SIZE);
+    this.buildPageInfo(suggestExtData.length);
     const suggestions = suggestExtData.slice(startCount, endCount).map(ExtensionHandler.extensionToSuggestResult);
     return suggestions;
   }
@@ -106,7 +106,7 @@ export default class ExtensionHandler extends CommandHandler {
       chrome.omnibox.setDefaultSuggestion({
         description: hoogle.description,
       });
-      cache.defaultContent = cache.currentInput;
+      cache.defaultContent = HoogleHandler.TRIGGER_PREFIX + " " + this.removeExtensionPrefix(cache.currentInput);
       suggestions = [hoogle];
     }
   }

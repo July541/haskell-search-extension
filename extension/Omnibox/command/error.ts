@@ -36,7 +36,7 @@ export default class ErrorHandler extends CommandHandler {
       keys: ["title", "code", "introduced"],
       all: true,
     });
-    this.totalPage = Math.ceil(suggestErrData.length / this.PAGE_SIZE);
+    this.buildPageInfo(suggestErrData.length);
     const suggestions = suggestErrData
       .slice(startCount, endCount)
       .map((x) => x.obj)

@@ -35,7 +35,7 @@ export default class LinkHandler extends CommandHandler {
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
     const suggestLinkData = fuzzysort.go(this.finalQuery, linkData, { key: "name", all: true });
-    this.totalPage = Math.ceil(suggestLinkData.length / this.PAGE_SIZE);
+    this.buildPageInfo(suggestLinkData.length);
     const suggestions = suggestLinkData
       .slice(startCount, endCount)
       .map((x) => x.obj)

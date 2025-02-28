@@ -54,7 +54,7 @@ export default class PackageHandler extends CommandHandler {
     const startCount = this.curPage * this.PAGE_SIZE;
     const endCount = startCount + this.PAGE_SIZE;
     const suggestHackageData = fuzzysort.go(this.finalQuery, this.searchTargets, { key: "name", all: true });
-    this.totalPage = Math.ceil(suggestHackageData.length / this.PAGE_SIZE);
+    this.buildPageInfo(suggestHackageData.length);
 
     const suggestions: chrome.omnibox.SuggestResult[] = suggestHackageData
       .slice(startCount, endCount)

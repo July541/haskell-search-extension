@@ -126,7 +126,7 @@ export default class DefaultHandler extends CommandHandler {
     const endCount = startCount + this.PAGE_SIZE;
 
     const candidates = fuzzysort.go(this.finalQuery, this.searchTargets, { key: "name", all: true });
-    this.totalPage = Math.ceil(candidates.length / this.PAGE_SIZE);
+    this.buildPageInfo(candidates.length);
     const suggestions = candidates.slice(startCount, endCount).map((x) => {
       const name = x.highlight("<match>", "</match>");
       return this.toSuggestionResult(name, x.obj);
