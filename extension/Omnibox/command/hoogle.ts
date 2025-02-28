@@ -30,7 +30,14 @@ export default class HoogleHandler extends CommandHandler {
     };
   }
 
-  handleChange(input: string, _cache: SearchCache): chrome.omnibox.SuggestResult[] {
+  handleChange(input: string, cache: SearchCache): chrome.omnibox.SuggestResult[] {
+    const clearCache = () => {
+      // Clear the cache in hoogle mode, otherwise <:hg xxx> doesn't work since `cache` has
+      // dirty data from previous input.
+      cache.currentInput = "";
+      cache.defaultContent = "";
+    };
+    clearCache();
     const suggestions = this.giveSuggestions(input);
     const head = suggestions.shift();
     if (head) {

@@ -66,10 +66,6 @@ export default class ExtensionHandler extends CommandHandler {
   }
 
   handleEnter(input: string, cache: SearchCache): string {
-    if (input === cache.currentInput) {
-      input = cache.defaultContent;
-    }
-
     const query = this.removeExtensionPrefix(input);
     this.parsePageAndRemovePager(query);
     return (

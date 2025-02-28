@@ -16,10 +16,6 @@ export default class ErrorHandler extends CommandHandler {
   }
 
   handleEnter(input: string, cache: SearchCache): string {
-    if (input === cache.currentInput) {
-      input = cache.defaultContent;
-    }
-
     const query = this.removeErrorPrefix(input);
     this.parsePageAndRemovePager(query);
 

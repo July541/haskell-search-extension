@@ -60,13 +60,6 @@ export default class DefaultHandler extends CommandHandler {
   }
 
   handleEnter(input: string, cache: SearchCache): string {
-    console.log("---", input);
-    if (input === cache.currentInput) {
-      // If the input is the same as the this.currentInput,
-      // that means the user wants to use the first search result.
-      // So we need to use the default content as the search target(like package name)
-      input = cache.defaultContent;
-    }
     this.parsePageAndRemovePager(input);
     const url = `https://hackage.haskell.org/package/${this.finalQuery}`;
     return url;
@@ -150,7 +143,7 @@ export default class DefaultHandler extends CommandHandler {
     } else {
       const hoogle = HoogleHandler.buildHoogleSuggestResult(this.finalQuery);
       chrome.omnibox.setDefaultSuggestion({ description: hoogle.description });
-      cache.defaultContent = cache.currentInput;
+      cache.defaultContent = HoogleHandler.TRIGGER_PREFIX + " " + cache.currentInput;
       suggestions = [hoogle];
     }
   }

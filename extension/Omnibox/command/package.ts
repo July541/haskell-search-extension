@@ -36,12 +36,6 @@ export default class PackageHandler extends CommandHandler {
   }
 
   handleEnter(input: string, cache: SearchCache): string {
-    if (input === cache.currentInput) {
-      // If the input is the same as the this.currentInput,
-      // that means the user wants to use the first search result.
-      // So we need to use the default content as the search target(like package name)
-      input = cache.defaultContent;
-    }
     const query = this.removeExtensionPrefix(input);
     this.parsePageAndRemovePager(query);
     const url = `https://hackage.haskell.org/package/${this.finalQuery}`;

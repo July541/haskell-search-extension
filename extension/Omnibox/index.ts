@@ -22,6 +22,9 @@ export class Omnibox {
 
     chrome.omnibox.onInputEntered.addListener((input: string) => {
       if (input === this.cache.currentInput) {
+        // If the input is the same as the this.currentInput,
+        // that means the user wants to use the first search result.
+        // So we need to use the default content as the search target(like package name)
         input = this.cache.defaultContent;
       }
 
