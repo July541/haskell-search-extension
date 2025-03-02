@@ -30,7 +30,7 @@ executable hse-data-processer
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base ^>=4.15.1.0
+    build-depends:    base
                     , conduit
                     , conduit-extra
                     , http-conduit

@@ -15,7 +15,8 @@ import Data.Conduit.List (sourceList, consume)
 import qualified Data.ByteString.Lazy as LBS
 import qualified Codec.Compression.GZip as GZip
 import qualified Codec.Archive.Tar as Tar
-import Codec.Archive.Tar (Entries(..), FormatError, EntryContent (..), Entry (entryContent), entryPath)
+import Codec.Archive.Tar (Entries(..), FormatError, EntryContent (..), entryPath, GenEntries(..), GenEntryContent(..))
+import Codec.Archive.Tar.Entry(entryContent)
 import Control.Monad.IO.Class (liftIO)
 import Conduit
 import System.FilePath (takeBaseName)
